@@ -4,9 +4,7 @@
   Author: Picono435
   -->
 # RandomTP
-The best Random Teleport Mod ever! With the Cauldron and other plugins systems being descontinued I created this mod for you guys that need a Random Teleport command in 1.12.2. This mod only works in servers, if you want a client-side mod suggest it in my discord.
-
-The source code will be created in soon ;)
+The best Random Teleport mod ever! With this mod you will be able to random teleport between dimensions and without colliding with mostly anything! Our mod is updated frequently and is always having issues fixes when reported. Our mod works with both sides! (Client-Side only and Server-Side only). Join our [discord](https://discord.gg/6ecP6K5) for more information about all our mods and plugins!
 
 ## Commands:
 
@@ -14,7 +12,7 @@ The source code will be created in soon ;)
 
 ## Versions:
 
-This mod is avaible for 1.12.2 and in soon will be avaible for 1.13.2 and 1.14.4 ;).
+This mod is avaiable for these versions: [1.12.2](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.14.4](https://github.com/Picono435/RandomTP/tree/1.14.4), [1.15.2](https://github.com/Picono435/RandomTP/tree/1.15.2) and [1.16.1](https://github.com/Picono435/RandomTP/tree/1.16.1).
 
 ## Links:
 
