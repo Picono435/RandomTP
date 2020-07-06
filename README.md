@@ -14,7 +14,7 @@ The source code will be created in soon ;)
 
 ## Versions:
 
-This mod is avaible for 1.12.2 and in soon will be avaible for 1.13.2 and 1.14.4 ;).
+This mod is avaiable for these versions: [1.12.2](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.14.4](https://github.com/Picono435/RandomTP/tree/1.14.4), [1.15.2](https://github.com/Picono435/RandomTP/tree/1.15.2) and [1.16.1](https://github.com/Picono435/RandomTP/tree/1.16.1).
 
 ## Links:
 
