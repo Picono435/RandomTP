@@ -13,7 +13,7 @@ The best Random Teleport mod ever! With this mod you will be able to random tele
 
 ## Versions:
 
-This mod is avaiable for these versions: [1.12.2](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.14.4](https://github.com/Picono435/RandomTP/tree/1.14.4), [1.15.2](https://github.com/Picono435/RandomTP/tree/1.15.2) and [1.16.1](https://github.com/Picono435/RandomTP/tree/1.16.1).
+This mod is avaiable for these versions: [1.12.2](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.14.4](https://github.com/Picono435/RandomTP/tree/1.14.4), [1.15.2](https://github.com/Picono435/RandomTP/tree/1.15.2) and [1.16.1](https://github.com/Picono435/RandomTP/tree/1.16.1). We are still working on porting the mod to other minecraft versions.
 
 ## Links:
 
