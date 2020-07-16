@@ -52,7 +52,9 @@ public class MainMod {
       {
         logger.info("Initalized Random Teleport Mod.");
         event.registerServerCommand(new RTPCommand());
-        event.registerServerCommand(new RTPDCommand());
+        if(Config.dim) {
+        	event.registerServerCommand(new RTPDCommand());
+        }
         
         config = new Configuration(new File("config/RandomTP/config.cfg"));
         Config.readConfig();

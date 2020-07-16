@@ -21,6 +21,7 @@ public class Config {
     public static String[] allowedDimensions = {"1", "2"};
     
     public static int cooldown = 0;
+    public static boolean useOriginal = false;
 
     public static void readConfig() {
         Configuration cfg = MainMod.config;
@@ -52,5 +53,6 @@ public class Config {
         
         cfg.addCustomCategoryComment(CATEGORY_OTHERS, "Others configuration settings for RandomTP!");
         cooldown  = cfg.getInt("cooldown", CATEGORY_OTHERS, cooldown, 0, Integer.MAX_VALUE, "How much cooldown do you want for the command (put 0 for none)");
+        useOriginal  = cfg.getBoolean("use-original", CATEGORY_OTHERS, useOriginal, "If you want to use the original RTP system or the /spreadplayers system. *ORIGINAL SYSTEM STILL ON BETA*");
     }
 }
