@@ -14,6 +14,7 @@ public class Config {
     public static ForgeConfigSpec.ConfigValue<Boolean> only_op_dim;
     
     public static ForgeConfigSpec.ConfigValue<Integer> cooldown;
+    public static ForgeConfigSpec.ConfigValue<Boolean> useOriginal;
     
     public static ForgeConfigSpec.ConfigValue<Boolean> dim;
     public static ForgeConfigSpec.ConfigValue<Boolean> useWhitelist;
@@ -24,7 +25,7 @@ public class Config {
     	
     	//DISTANCE CATEGORY
     	max_distance = config
-    			.comment(" Max distance that you want to a person be teleported. (auto = world border size / 2) [default: auto]")
+    			.comment(" Max distance that you want to a person be teleported. (0 = world border size / 2) [default: auto]")
     			.defineInRange("distance.max_distance", 0, 0, Integer.MAX_VALUE);
     	
     	min_distance = config
@@ -49,6 +50,10 @@ public class Config {
     	cooldown = config
     			.comment("How much cooldown do you want for the command (put 0 for none) [range: 0 ~ 1000, default: 0]")
     			.defineInRange("others.cooldown", 0, 0, Integer.MAX_VALUE);
+    	
+    	useOriginal = config
+    				.comment("If you want to use the original RTP system or the /spreadplayers system. *ORIGINAL SYSTEM STILL ON BETA*")
+    				.define("others.use-original", false);
     	
     	//PERMISSION CATEGORY
     	only_op_basic = config

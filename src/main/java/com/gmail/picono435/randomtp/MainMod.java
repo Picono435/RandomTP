@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
+import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
 import net.minecraft.server.MinecraftServer;
@@ -27,7 +28,6 @@ public class MainMod {
 
       public static final String MODID = "randomtp";
       public static final String NAME = "Random Teleport Mod";
-      public static final String VERSION = "1.3";
 
       public static final String NEW_LINE;
       
@@ -46,7 +46,6 @@ public class MainMod {
     	  ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.messages, "RandomTP" + File.separatorChar + "messages.toml");
     	  
     	  FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
-    	  FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
     	  
     	  ConfigHandler.loadConfig(ConfigHandler.config, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "config.toml").toString());
     	  ConfigHandler.loadConfig(ConfigHandler.messages, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "messages.toml").toString());
@@ -55,19 +54,20 @@ public class MainMod {
       }
       
       @SubscribeEvent
-      public void preInit(FMLCommonSetupEvent event)
-      {
+      public void preInit(FMLCommonSetupEvent event) {
     	  logger = LogManager.getLogger();
       }
 
       @SubscribeEvent
-      public void init(FMLServerStartingEvent event)
-      {
+      public void init(FMLServerStartingEvent event) {
         logger.info("Initalized Random Teleport Mod.");
         server = event.getServer();
         
         RTPCommand.register(event.getCommandDispatcher());
-        RTPDCommand.register(event.getCommandDispatcher());
+        
+        if(Config.dim.get()) {
+        	RTPDCommand.register(event.getCommandDispatcher());
+        }
         
         logger.info("Configs files loaded.");
         
