@@ -3,7 +3,7 @@ loaderVersion="[28,)" #mandatory (28 is current forge version)
 issueTrackerURL="https://github.com/Picono435/RandomTP/issues" #optional
 [[mods]] #mandatory
 modId="randomtp" #mandatory
-version="1.3" #mandatory
+version="MC1.14.4-2.1" #mandatory
 displayName="Random Teleport Mod" #mandatory
 displayURL="https://www.piconodev.tk/" #optional
 logoFile="logo.jpeg" #optional
