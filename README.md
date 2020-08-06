@@ -8,8 +8,9 @@ The best Random Teleport mod ever! With this mod you will be able to random tele
 
 ## Commands:
 
-<p>/rtp - Teleports you to a random location.</p>
-<p>/rtpd - Teleports you to a random location in another dimension.</p>
+<p>/rtp - Teleports you to a random location.
+<br>
+/rtpd - Teleports you to a random location in another dimension.</p>
 
 ## Versions:
 
