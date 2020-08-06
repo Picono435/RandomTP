@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = 'MC1.16.1-4.0-BETA'
+version = 'MC1.16.1-4.1-BETA'
 group = 'com.gmail.picono435.randomtp' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'RandomTP'
 
