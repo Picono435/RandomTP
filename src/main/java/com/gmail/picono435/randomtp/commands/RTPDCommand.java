@@ -14,33 +14,47 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.server.permission.PermissionAPI;
 
-public class RTPCommand {
+public class RTPDCommand {
 	
 	private static HashMap<String, Long> cooldowns = new HashMap<String, Long>();
 	
 	private static Block[] dangerBlockArray = { Blocks.LAVA, Blocks.WATER, Blocks.AIR };
 	
 	public static void register(CommandDispatcher<CommandSource> dispatcher) {
-		dispatcher.register(Commands.literal("rtp").requires(source -> hasPermission(source))
-				.executes(context -> runCommand(context.getSource().asPlayer())
+		dispatcher.register(Commands.literal("rtpd").requires(source -> hasPermission(source))
+				.then(
+						Commands.argument("dimension", DimensionArgument.getDimension())
+						.executes(context -> 
+						runCommand(context.getSource().asPlayer(), DimensionArgument.getDimensionArgument(context, "dimension"))
+						)
 				));
-		dispatcher.register(Commands.literal("randomtp").requires(source -> hasPermission(source))
-				.executes(context -> runCommand(context.getSource().asPlayer())
+		dispatcher.register(Commands.literal("randomteleportdimension").requires(source -> hasPermission(source))
+				.then(
+						Commands.argument("dimension", DimensionArgument.getDimension())
+						.executes(context -> 
+						runCommand(context.getSource().asPlayer(), DimensionArgument.getDimensionArgument(context, "dimension"))
+						)
 				));
-		dispatcher.register(Commands.literal("randomteleport").requires(source -> hasPermission(source))
-				.executes(context -> runCommand(context.getSource().asPlayer())
+		dispatcher.register(Commands.literal("randomtpd").requires(source -> hasPermission(source))
+				.then(
+						Commands.argument("dimension", DimensionArgument.getDimension())
+						.executes(context ->
+						runCommand(context.getSource().asPlayer(), DimensionArgument.getDimensionArgument(context, "dimension"))
+						)
 				));
 	}
 	
-	private static int runCommand(PlayerEntity p) {
+	private static int runCommand(PlayerEntity p, ServerWorld dim) {
 		World world = p.getEntityWorld();
 	    WorldBorder border = world.getWorldBorder();
 	    MinecraftServer server = MainMod.server;
@@ -51,14 +65,21 @@ public class RTPCommand {
 	        p.sendMessage(cooldownmes, p.getUniqueID());
 	        return 1;
 	    } else {
+	    	double cal = border.getDiameter()/2;
+	    	BigDecimal num = new BigDecimal(cal);
+	    	String maxDistance = num.toPlainString();
+	    	String dimensionId = dim.func_234923_W_().func_240901_a_().toString();
+	    	p.setPortal(p.getPosition());
+	    	if(!inWhitelist(dimensionId)) {
+	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')), p.getUniqueID());
+	    		return 1;
+	    	}
+	    	p.changeDimension(dim);
 	    	if(Config.useOriginal.get()) {
 	    		randomTeleport(p);
 	    		cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 	    		return 1;
 	    	}
-	    	double cal = border.getDiameter()/2;
-	    	BigDecimal num = new BigDecimal(cal);
-	    	String maxDistance = num.toPlainString();
 	        if(Config.max_distance.get() == 0) {
 	        	server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + maxDistance + " false " + p.getName().getString().toLowerCase());
 	        	p.sendMessage(succefull, p.getUniqueID());
@@ -92,6 +113,16 @@ public class RTPCommand {
 		  return secondsLeft;
 	  }
 	
+	  public static boolean inWhitelist(String dimension) {
+		  //WHITELIST
+		  if(Config.useWhitelist.get()) {
+			  return Config.allowedDimensions.get().contains(dimension);
+		  //BLACKLIST
+		  } else {
+			  return !Config.allowedDimensions.get().contains(dimension); 
+		  }
+	  }
+	  
 	private static boolean hasPermission(CommandSource source) {
 		try {
 			return PermissionAPI.hasPermission(source.asPlayer(), "randomtp.command.basic");
@@ -101,7 +132,7 @@ public class RTPCommand {
 	}
 	
 	private static void randomTeleport(PlayerEntity p) {
-		try  {
+		try {
 			Random r = new Random();
 			  int low = Config.min_distance.get();
 			  int high = Config.max_distance.get();

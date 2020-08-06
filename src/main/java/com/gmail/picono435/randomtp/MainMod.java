@@ -6,10 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.gmail.picono435.randomtp.commands.RTPCommand;
+import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -46,7 +48,6 @@ public class MainMod {
     	  ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.messages, "RandomTP" + File.separatorChar + "messages.toml");
     	  
     	  FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
-    	  FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
     	  
     	  ConfigHandler.loadConfig(ConfigHandler.config, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "config.toml").toString());
     	  ConfigHandler.loadConfig(ConfigHandler.messages, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "messages.toml").toString());
@@ -65,11 +66,15 @@ public class MainMod {
         logger.info("Initalized Random Teleport Mod.");
         server = event.getServer();
         
-        RTPCommand.register(event.getCommandDispatcher());
-        
         logger.info("Configs files loaded.");
         
         PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
         PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
       }  
+      
+      @SubscribeEvent
+      public void command(RegisterCommandsEvent event) {
+    	  RTPCommand.register(event.getDispatcher());
+    	  RTPDCommand.register(event.getDispatcher());
+      }
 }
