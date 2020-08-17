@@ -21,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 public class RTPDCommand {
@@ -54,24 +54,24 @@ public class RTPDCommand {
 				));
 	}
 	
-	private static int runCommand(PlayerEntity p, DimensionType dim) {
+	private static int runCommand(PlayerEntity p, ServerWorld dim) {
 		World world = p.getEntityWorld();
 	    WorldBorder border = world.getWorldBorder();
 	    MinecraftServer server = MainMod.server;
-	    StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+	    StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
 	    if(!checkCooldown(p)) {
 	    	long secondsLeft = getCooldownLeft(p);
 	    	StringTextComponent cooldownmes = new StringTextComponent(Messages.cooldown.get().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-	        p.sendMessage(cooldownmes);
+	        p.sendMessage(cooldownmes, p.getUniqueID());
 	        return 1;
 	    } else {
 	    	double cal = border.getDiameter()/2;
 	    	BigDecimal num = new BigDecimal(cal);
 	    	String maxDistance = num.toPlainString();
-	    	int dimensionId = dim.getId();
+	    	String dimensionId = dim.func_234923_W_().func_240901_a_().toString();
 	    	p.setPortal(p.getPosition());
 	    	if(!inWhitelist(dimensionId)) {
-	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dim.getId() + "").replace('&', '§')));
+	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')), p.getUniqueID());
 	    		return 1;
 	    	}
 	    	p.changeDimension(dim);
@@ -80,17 +80,12 @@ public class RTPDCommand {
 	    		cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 	    		return 1;
 	    	}
-	    	if(Config.useOriginal.get()) {
-	    		randomTeleport(p);
-	    		cooldowns.put(p.getName().getString(), System.currentTimeMillis());
-	    		return 1;
-	    	}
 	        if(Config.max_distance.get() == 0) {
 	        	server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + maxDistance + " false " + p.getName().getString().toLowerCase());
-	        	p.sendMessage(succefull);
+	        	p.sendMessage(succefull, p.getUniqueID());
 	        } else {
 	    		server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + Config.max_distance.get() + " false " + p.getName().getString().toLowerCase());
-	    		p.sendMessage(succefull);
+	    		p.sendMessage(succefull, p.getUniqueID());
 	        }
 	        cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 	    }
@@ -118,13 +113,13 @@ public class RTPDCommand {
 		  return secondsLeft;
 	  }
 	
-	  public static boolean inWhitelist(int dimension) {
+	  public static boolean inWhitelist(String dimension) {
 		  //WHITELIST
 		  if(Config.useWhitelist.get()) {
-			  return Config.allowedDimensions.get().contains(dimension + "");
+			  return Config.allowedDimensions.get().contains(dimension);
 		  //BLACKLIST
 		  } else {
-			  return !Config.allowedDimensions.get().contains(dimension + ""); 
+			  return !Config.allowedDimensions.get().contains(dimension); 
 		  }
 	  }
 	  
@@ -161,14 +156,14 @@ public class RTPDCommand {
 				  }
 				  if(maxTries == 0) {
 					  StringTextComponent msg = new StringTextComponent("Error, please try again.");
-					  p.sendMessage(msg);
+					  p.sendMessage(msg, p.getUniqueID());
 					  return;
 				  }
 			  }
 			  
 			  p.setPositionAndUpdate(x, y, z);
-			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
-			  p.sendMessage(succefull);
+			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
+			  p.sendMessage(succefull, p.getUniqueID());
 		} catch(Exception ex) {
 			MainMod.logger.info("Error executing command.");
 			ex.printStackTrace();

@@ -44,11 +44,11 @@ public class RTPCommand {
 		World world = p.getEntityWorld();
 	    WorldBorder border = world.getWorldBorder();
 	    MinecraftServer server = MainMod.server;
-	    StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+	    StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
 	    if(!checkCooldown(p)) {
 	    	long secondsLeft = getCooldownLeft(p);
 	    	StringTextComponent cooldownmes = new StringTextComponent(Messages.cooldown.get().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-	        p.sendMessage(cooldownmes);
+	        p.sendMessage(cooldownmes, p.getUniqueID());
 	        return 1;
 	    } else {
 	    	if(Config.useOriginal.get()) {
@@ -61,10 +61,10 @@ public class RTPCommand {
 	    	String maxDistance = num.toPlainString();
 	        if(Config.max_distance.get() == 0) {
 	        	server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + maxDistance + " false " + p.getName().getString().toLowerCase());
-	        	p.sendMessage(succefull);
+	        	p.sendMessage(succefull, p.getUniqueID());
 	        } else {
 	    		server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + Config.max_distance.get() + " false " + p.getName().getString().toLowerCase());
-	    		p.sendMessage(succefull);
+	    		p.sendMessage(succefull, p.getUniqueID());
 	        }
 	        cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 	    }
@@ -125,14 +125,14 @@ public class RTPCommand {
 				  }
 				  if(maxTries == 0) {
 					  StringTextComponent msg = new StringTextComponent("Error, please try again.");
-					  p.sendMessage(msg);
+					  p.sendMessage(msg, p.getUniqueID());
 					  return;
 				  }
 			  }
 			  
 			  p.setPositionAndUpdate(x, y, z);
-			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
-			  p.sendMessage(succefull);
+			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
+			  p.sendMessage(succefull, p.getUniqueID());
 		} catch(Exception ex) {
 			MainMod.logger.info("Error executing command.");
 			ex.printStackTrace();

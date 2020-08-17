@@ -38,13 +38,13 @@ public class Config {
     			.define("inter-dimensions-command.inter-dim", true);
     	
     	useWhitelist = config
-    			.comment("Do you want to use the whitelist or blacklist dimension?  [default: true]")
-    			.define("inter-dimensions-command.use-whitelist", true);
+    			.comment("Do you want to use the whitelist or blacklist dimension?  [default: false]")
+    			.define("inter-dimensions-command.use-whitelist", false);
     	
-    	String[] array = {"1", "-1"};
+    	String[] array = {"minecraft:the_end", "twilight:dimension"};
     	allowedDimensions = config
-    			.comment("The dimensions whitelist (Works with IDs only, use-whitelist:true=whitelist use-whitelist:true=blacklist) [default: [1], [2]]")
-    			.define("inter-dimensions.allowed-dimensions", Arrays.asList(array));
+    			.comment("The dimensions whitelist (Works with namespaces:paths only, use-whitelist:true=whitelist use-whitelist:true=blacklist) [default: [minecraft:the_end], [twilight:dimension]]")
+    			.define("inter-dimensions-command.whitelist-dimension", Arrays.asList(array));
     	
     	//OTHERS CATEGORY
     	cooldown = config
@@ -53,7 +53,7 @@ public class Config {
     	
     	useOriginal = config
     				.comment("If you want to use the original RTP system or the /spreadplayers system. *ORIGINAL SYSTEM STILL ON BETA*")
-    				.define("others.use-original", false);
+    				.define("others.use-original", true);
     	
     	//PERMISSION CATEGORY
     	only_op_basic = config

@@ -7,11 +7,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
-import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +28,8 @@ public class MainMod {
 
       public static final String MODID = "randomtp";
       public static final String NAME = "Random Teleport Mod";
+      public static final String VERSION = "1.3";
+      public static String minecraftVersion = "";
 
       public static final String NEW_LINE;
       
@@ -60,18 +62,19 @@ public class MainMod {
 
       @SubscribeEvent
       public void init(FMLServerStartingEvent event) {
+    	minecraftVersion = event.getServer().getMinecraftVersion();
         logger.info("Initalized Random Teleport Mod.");
         server = event.getServer();
-        
-        RTPCommand.register(event.getCommandDispatcher());
-        
-        if(Config.dim.get()) {
-        	RTPDCommand.register(event.getCommandDispatcher());
-        }
         
         logger.info("Configs files loaded.");
         
         PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
         PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
       }  
+      
+      @SubscribeEvent
+      public void command(RegisterCommandsEvent event) {
+    	  RTPCommand.register(event.getDispatcher());
+    	  RTPDCommand.register(event.getDispatcher());
+      }
 }
