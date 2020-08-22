@@ -15,6 +15,7 @@ public class Config {
     
     public static ForgeConfigSpec.ConfigValue<Integer> cooldown;
     public static ForgeConfigSpec.ConfigValue<Boolean> useOriginal;
+    public static ForgeConfigSpec.ConfigValue<Integer> maxTries;
     
     public static ForgeConfigSpec.ConfigValue<Boolean> dim;
     public static ForgeConfigSpec.ConfigValue<Boolean> useWhitelist;
@@ -52,8 +53,12 @@ public class Config {
     			.defineInRange("others.cooldown", 0, 0, Integer.MAX_VALUE);
     	
     	useOriginal = config
-    				.comment("If you want to use the original RTP system or the /spreadplayers system. *ORIGINAL SYSTEM STILL ON BETA*")
+    				.comment("If you want to use the original RTP system or the /spreadplayers system.")
     				.define("others.use-original", true);
+    	
+    	maxTries = config
+				.comment("The amount of tries to find a safe location (original system) [-1 = infinite]")
+				.define("others.max-tries", -1);
     	
     	//PERMISSION CATEGORY
     	only_op_basic = config

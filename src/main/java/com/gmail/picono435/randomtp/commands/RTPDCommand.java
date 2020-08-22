@@ -132,7 +132,7 @@ public class RTPDCommand {
 	}
 	
 	private static void randomTeleport(PlayerEntity p) {
-		try {
+		try  {
 			Random r = new Random();
 			  int low = Config.min_distance.get();
 			  int high = Config.max_distance.get();
@@ -142,7 +142,7 @@ public class RTPDCommand {
 			  int x = r.nextInt(high-low) + low;
 			  int y = 50;
 			  int z = r.nextInt(high-low) + low;
-			  int maxTries = -1;
+			  int maxTries = Config.maxTries.get();
 			  while (!isSafe(p, x, y, z) && (maxTries == -1 || maxTries > 0)) {
 				  y++;
 				  if(y >= 120) {
