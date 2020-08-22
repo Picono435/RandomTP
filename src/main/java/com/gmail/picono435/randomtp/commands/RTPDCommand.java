@@ -68,18 +68,13 @@ public class RTPDCommand {
 	    	double cal = border.getDiameter()/2;
 	    	BigDecimal num = new BigDecimal(cal);
 	    	String maxDistance = num.toPlainString();
-	    	int dimensionId = dim.getId();
+	    	String dimensionId = dim.getRegistryName().toString();
 	    	p.setPortal(p.getPosition());
 	    	if(!inWhitelist(dimensionId)) {
-	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dim.getId() + "").replace('&', '§')));
+	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')));
 	    		return 1;
 	    	}
 	    	p.changeDimension(dim);
-	    	if(Config.useOriginal.get()) {
-	    		randomTeleport(p);
-	    		cooldowns.put(p.getName().getString(), System.currentTimeMillis());
-	    		return 1;
-	    	}
 	    	if(Config.useOriginal.get()) {
 	    		randomTeleport(p);
 	    		cooldowns.put(p.getName().getString(), System.currentTimeMillis());
@@ -118,13 +113,13 @@ public class RTPDCommand {
 		  return secondsLeft;
 	  }
 	
-	  public static boolean inWhitelist(int dimension) {
+	  public static boolean inWhitelist(String dimension) {
 		  //WHITELIST
 		  if(Config.useWhitelist.get()) {
-			  return Config.allowedDimensions.get().contains(dimension + "");
+			  return Config.allowedDimensions.get().contains(dimension);
 		  //BLACKLIST
 		  } else {
-			  return !Config.allowedDimensions.get().contains(dimension + ""); 
+			  return !Config.allowedDimensions.get().contains(dimension); 
 		  }
 	  }
 	  
@@ -137,7 +132,7 @@ public class RTPDCommand {
 	}
 	
 	private static void randomTeleport(PlayerEntity p) {
-		try {
+		try  {
 			Random r = new Random();
 			  int low = Config.min_distance.get();
 			  int high = Config.max_distance.get();
@@ -147,7 +142,7 @@ public class RTPDCommand {
 			  int x = r.nextInt(high-low) + low;
 			  int y = 50;
 			  int z = r.nextInt(high-low) + low;
-			  int maxTries = -1;
+			  int maxTries = Config.maxTries.get();
 			  while (!isSafe(p, x, y, z) && (maxTries == -1 || maxTries > 0)) {
 				  y++;
 				  if(y >= 120) {
@@ -167,7 +162,7 @@ public class RTPDCommand {
 			  }
 			  
 			  p.setPositionAndUpdate(x, y, z);
-			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
 			  p.sendMessage(succefull);
 		} catch(Exception ex) {
 			MainMod.logger.info("Error executing command.");

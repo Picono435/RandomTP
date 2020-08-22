@@ -111,7 +111,7 @@ public class RTPCommand {
 			  int x = r.nextInt(high-low) + low;
 			  int y = 50;
 			  int z = r.nextInt(high-low) + low;
-			  int maxTries = -1;
+			  int maxTries = Config.maxTries.get();
 			  while (!isSafe(p, x, y, z) && (maxTries == -1 || maxTries > 0)) {
 				  y++;
 				  if(y >= 120) {
@@ -131,7 +131,7 @@ public class RTPCommand {
 			  }
 			  
 			  p.setPositionAndUpdate(x, y, z);
-			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
 			  p.sendMessage(succefull);
 		} catch(Exception ex) {
 			MainMod.logger.info("Error executing command.");
