@@ -9,10 +9,7 @@ public class Config {
 	
 	public static ForgeConfigSpec.ConfigValue<Integer> max_distance;
     public static ForgeConfigSpec.ConfigValue<Integer> min_distance;
-    
-    public static ForgeConfigSpec.ConfigValue<Boolean> only_op_basic;
-    public static ForgeConfigSpec.ConfigValue<Boolean> only_op_dim;
-    
+
     public static ForgeConfigSpec.ConfigValue<Integer> cooldown;
     public static ForgeConfigSpec.ConfigValue<Boolean> useOriginal;
     public static ForgeConfigSpec.ConfigValue<Integer> maxTries;
@@ -59,14 +56,5 @@ public class Config {
     	maxTries = config
 				.comment("The amount of tries to find a safe location (original system) [-1 = infinite]")
 				.define("others.max-tries", -1);
-    	
-    	//PERMISSION CATEGORY
-    	only_op_basic = config
-    			.comment("If you want only op players or with the required permission node to execute the basic /rtp command. (Permission node: randomtp.command.basic) [default: true]")
-    			.define("permission.only_op_basic", true);
-    	
-    	only_op_dim = config
-    			.comment("If you want only op players or with the required permission node to execute the inter dimension /rtpd command. (Permission node: randomtp.command.interdim) [default: true])")
-    			.define("permission.only_op_dim", true);
     }
 }
