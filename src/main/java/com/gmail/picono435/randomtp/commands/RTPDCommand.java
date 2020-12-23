@@ -40,8 +40,7 @@ public class RTPDCommand extends CommandBase {
     	p.sendMessage(new TextComponentString(Messages.invalidArgs.replaceAll("\\{playerName\\}", p.getName()).replace('&', '§')));
     	return;
     }
-    TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replace('&', '§'));
-    if(!checkCooldown(p)) {
+    if(!checkCooldown(p) && !PermissionAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
     	long secondsLeft = getCooldownLeft(p);
     	TextComponentString cooldownmes = new TextComponentString(Messages.cooldown.replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName()).replace('&', '§'));
         p.sendMessage(cooldownmes);
@@ -72,9 +71,11 @@ public class RTPDCommand extends CommandBase {
     	}
     	if(Config.max_distance == 0) {
         	server.getCommandManager().executeCommand(server, "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance + " " + border.getDiameter()/2 + " false " + p.getDisplayNameString());
-         	p.sendMessage(succefull);
+        	TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
+        	p.sendMessage(succefull);
         } else {
         	server.getCommandManager().executeCommand(server, "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance + " " + Config.max_distance + " false " + p.getDisplayNameString());
+        	TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
         	p.sendMessage(succefull);
         }
         cooldowns.put(sender.getName(), System.currentTimeMillis());
@@ -131,16 +132,10 @@ public class RTPDCommand extends CommandBase {
   @Override
   public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 	  if(!(sender instanceof EntityPlayer)) return true;
-	  if(Config.only_op_dim) {
-		  EntityPlayer p;
-		  try {
-			  p = getCommandSenderAsPlayer(sender);
-		  } catch (PlayerNotFoundException e) {
-			  return true;
-		  }
-		  return PermissionAPI.hasPermission(p, "randomtp.command.interdim");
-	  } else {
-		  return true;
+	  try {
+		return PermissionAPI.hasPermission(getCommandSenderAsPlayer(sender), "randomtp.command.interdim");
+	  } catch (PlayerNotFoundException e) {
+		return false;
 	  }
   }
   
@@ -167,14 +162,14 @@ public class RTPDCommand extends CommandBase {
 			  maxTries--;
 		  }
 		  if(maxTries == 0) {
-			  TextComponentString msg = new TextComponentString("Error, please try again.");
+			  TextComponentString msg = new TextComponentString(Messages.maxTries.replaceAll("\\{playerName\\}", p.getName()).replaceAll("&", "§"));
 			  p.sendMessage(msg);
 			  return;
 		  }
 	  }
 	  
 	  p.setPositionAndUpdate(x, y, z);
-	  TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+	  TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
 	  p.sendMessage(succefull);
   }
   

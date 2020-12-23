@@ -36,8 +36,7 @@ public class RTPCommand extends CommandBase {
     World world = getCommandSenderAsPlayer(sender).getEntityWorld();
     WorldBorder border = world.getWorldBorder();
     EntityPlayer p = getCommandSenderAsPlayer(sender);
-    TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
-    if(!checkCooldown(p)) {
+    if(!checkCooldown(p) && !PermissionAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
     	long secondsLeft = getCooldownLeft(p);
     	TextComponentString cooldownmes = new TextComponentString(Messages.cooldown.replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName()).replaceAll("&", "§"));
         p.sendMessage(cooldownmes);
@@ -50,9 +49,11 @@ public class RTPCommand extends CommandBase {
     	}
     	if(Config.max_distance == 0) {
             server.getCommandManager().executeCommand(server, "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance + " " + border.getDiameter()/2 + " false " + p.getDisplayNameString());
+            TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
             p.sendMessage(succefull);
         } else {
         	server.getCommandManager().executeCommand(server, "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance + " " + Config.max_distance + " false " + p.getDisplayNameString());
+        	TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
         	p.sendMessage(succefull);
         }
         cooldowns.put(sender.getName(), System.currentTimeMillis());
@@ -99,16 +100,10 @@ public class RTPCommand extends CommandBase {
   @Override
   public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 	  if(!(sender instanceof EntityPlayer)) return true;
-	  if(Config.only_op_basic) {
-		  EntityPlayer p;
-		  try {
-			  p = getCommandSenderAsPlayer(sender);
-		  } catch (PlayerNotFoundException e) {
-			  return true;
-		  }
-		  return PermissionAPI.hasPermission(p, "randomtp.command.basic");
-	  } else {
-		  return true;
+	  try {
+		return PermissionAPI.hasPermission(getCommandSenderAsPlayer(sender), "randomtp.command.basic");
+	  } catch (PlayerNotFoundException e) {
+		return false;
 	  }
   }
 
@@ -123,7 +118,7 @@ public class RTPCommand extends CommandBase {
 	  int x = r.nextInt(high-low) + low;
 	  int y = 50;
 	  int z = r.nextInt(high-low) + low;
-	  int maxTries = -1;
+	  int maxTries = Config.maxTries;
 	  while (!isSafe(p, x, y, z) && (maxTries == -1 || maxTries > 0)) {
 		  y++;
 		  if(y >= 120) {
@@ -136,14 +131,14 @@ public class RTPCommand extends CommandBase {
 			  maxTries--;
 		  }
 		  if(maxTries == 0) {
-			  TextComponentString msg = new TextComponentString("Error, please try again.");
+			  TextComponentString msg = new TextComponentString(Messages.maxTries.replaceAll("\\{playerName\\}", p.getName()).replaceAll("&", "§"));
 			  p.sendMessage(msg);
 			  return;
 		  }
 	  }
 	  
 	  p.setPositionAndUpdate(x, y, z);
-	  TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockZ\\}", "" + p.getPositionVector().z).replaceAll("\\{blockX\\}", "" + p.getPositionVector().x).replaceAll("&", "§"));
+	  TextComponentString succefull = new TextComponentString(Messages.succefully.replaceAll("\\{playerName\\}", p.getName()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVector().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVector().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVector().z).replaceAll("&", "§"));
 	  p.sendMessage(succefull);
   }
   

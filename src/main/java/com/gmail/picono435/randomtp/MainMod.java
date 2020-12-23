@@ -23,7 +23,7 @@ public class MainMod {
 
       public static final String MODID = "randomtp";
       public static final String NAME = "Random Teleport Mod";
-      public static final String VERSION = "1.3";
+      public static final String VERSION = "MC1.12.2-1.3.4";
 
       public static final String NEW_LINE;
       
@@ -71,8 +71,9 @@ public class MainMod {
         
         logger.info("Configs files loaded.");
         
-        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
-        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
+        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
+        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtpdimension");
+        PermissionAPI.registerNode("randomtp.cooldown.exempt", DefaultPermissionLevel.OP, "The permission used to be exempt from the cooldown");
       }
       
       public void preInit(FMLPostInitializationEvent event)

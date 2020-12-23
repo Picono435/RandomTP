@@ -7,11 +7,12 @@ import net.minecraftforge.common.config.Configuration;
 public class Messages {
     private static final String CATEGORY_COMMAND = "Command";
 
-    public static String succefully = "&aSuccefully teleported you to a random location.";
+    public static String succefully = "&aYou have been teleported to the coordinates &e{blockX}, {blockY}, {blockZ}&a.";
     public static String cooldown = "&cWait more {secondsLeft} seconds for execute the command again.";
     public static String invalidArgs = "&cPlease use /rtpd (dimension).";
     public static String invalidDimension = "&cPlease put a valid dimension (e.g: -1).";
     public static String dimensionNotAllowed = "&cYou cannot random teleport to that dimension!";
+    public static String maxTries = "&cTimed out trying to find a safe location to warp to.";
     
     public static void readConfig() {
         Configuration cfg = MainMod.messages;
@@ -34,5 +35,6 @@ public class Messages {
         invalidArgs = cfg.getString("invalid-args", CATEGORY_COMMAND, invalidArgs, "Message that you want to appier when you execute /rtpd without args. [ placeholders: {playerName}, color codes: & + letter (example: &c) ]");
         invalidDimension = cfg.getString("invalid-dimension", CATEGORY_COMMAND, invalidDimension, "Message that you want to appier when you execute /rtpd with a invalid dimension [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ].");
         dimensionNotAllowed = cfg.getString("blacklist-dimension", CATEGORY_COMMAND, dimensionNotAllowed, "Message that you want to appier when you execute /rtpd with a dimension that is in the blacklist [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ].");
+        maxTries = cfg.getString("max-tries", CATEGORY_COMMAND, dimensionNotAllowed, "Message that you want to appier when the max tries of finding a safe location is reached [ placeholders: {playerName}, color codes: & + letter (example: &c) ].");
     }
 }
