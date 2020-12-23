@@ -58,8 +58,7 @@ public class RTPDCommand {
 		World world = p.getEntityWorld();
 	    WorldBorder border = world.getWorldBorder();
 	    MinecraftServer server = MainMod.server;
-	    StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
-	    if(!checkCooldown(p)) {
+	    if(!checkCooldown(p) && !PermissionAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 	    	long secondsLeft = getCooldownLeft(p);
 	    	StringTextComponent cooldownmes = new StringTextComponent(Messages.cooldown.get().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
 	        p.sendMessage(cooldownmes, p.getUniqueID());
@@ -68,7 +67,7 @@ public class RTPDCommand {
 	    	double cal = border.getDiameter()/2;
 	    	BigDecimal num = new BigDecimal(cal);
 	    	String maxDistance = num.toPlainString();
-	    	String dimensionId = dim.func_234923_W_().func_240901_a_().toString();
+	    	String dimensionId = dim.getDimensionKey().getRegistryName().toString();
 	    	p.setPortal(p.getPosition());
 	    	if(!inWhitelist(dimensionId)) {
 	    		p.sendMessage(new StringTextComponent(Messages.dimensionNotAllowed.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')), p.getUniqueID());
@@ -82,9 +81,11 @@ public class RTPDCommand {
 	    	}
 	        if(Config.max_distance.get() == 0) {
 	        	server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + maxDistance + " false " + p.getName().getString().toLowerCase());
+	        	StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVec().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVec().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVec().z).replaceAll("&", "§"));
 	        	p.sendMessage(succefull, p.getUniqueID());
 	        } else {
 	    		server.getCommandManager().handleCommand(server.getCommandSource(), "spreadplayers " + border.getCenterX() + " " + border.getCenterZ() + " " + Config.min_distance.get() + " " + Config.max_distance.get() + " false " + p.getName().getString().toLowerCase());
+	    		StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVec().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVec().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVec().z).replaceAll("&", "§"));
 	    		p.sendMessage(succefull, p.getUniqueID());
 	        }
 	        cooldowns.put(p.getName().getString(), System.currentTimeMillis());
@@ -125,7 +126,7 @@ public class RTPDCommand {
 	  
 	private static boolean hasPermission(CommandSource source) {
 		try {
-			return PermissionAPI.hasPermission(source.asPlayer(), "randomtp.command.basic");
+			return PermissionAPI.hasPermission(source.asPlayer(), "randomtp.command.interdim");
 		} catch (CommandSyntaxException e) {
 			return false;
 		}
@@ -155,14 +156,14 @@ public class RTPDCommand {
 					  maxTries--;
 				  }
 				  if(maxTries == 0) {
-					  StringTextComponent msg = new StringTextComponent("Error, please try again.");
+					  StringTextComponent msg = new StringTextComponent(Messages.maxTries.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
 					  p.sendMessage(msg, p.getUniqueID());
 					  return;
 				  }
 			  }
 			  
 			  p.setPositionAndUpdate(x, y, z);
-			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockZ\\}", "" + p.getPositionVec().z).replaceAll("\\{blockX\\}", "" + p.getPositionVec().x).replaceAll("&", "§"));
+			  StringTextComponent succefull = new StringTextComponent(Messages.succefully.get().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.getPositionVec().x).replaceAll("\\{blockY\\}", "" + (int)p.getPositionVec().y).replaceAll("\\{blockZ\\}", "" + (int)p.getPositionVec().z).replaceAll("&", "§"));
 			  p.sendMessage(succefull, p.getUniqueID());
 		} catch(Exception ex) {
 			MainMod.logger.info("Error executing command.");

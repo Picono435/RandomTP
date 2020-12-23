@@ -25,12 +25,7 @@ import net.minecraftforge.server.permission.PermissionAPI;
  
 @Mod("randomtp")
 public class MainMod {
-
-      public static final String MODID = "randomtp";
-      public static final String NAME = "Random Teleport Mod";
-      public static final String VERSION = "1.3";
-      public static String minecraftVersion = "";
-
+	
       public static final String NEW_LINE;
       
       public static Logger logger;
@@ -62,14 +57,14 @@ public class MainMod {
 
       @SubscribeEvent
       public void init(FMLServerStartingEvent event) {
-    	minecraftVersion = event.getServer().getMinecraftVersion();
         logger.info("Initalized Random Teleport Mod.");
         server = event.getServer();
         
         logger.info("Configs files loaded.");
         
-        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
-        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.OP, "The permission to execute the command /randomtp");
+        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
+        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtpdimension");
+        PermissionAPI.registerNode("randomtp.cooldown.exempt", DefaultPermissionLevel.OP, "The permission used to be exempt from the cooldown");
       }  
       
       @SubscribeEvent
