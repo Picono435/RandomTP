@@ -5,7 +5,7 @@
   "description": "A mod that teleports you to a random location without colliding with lava, water or the world border.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "https://www.piconodev.tk/",
+  "url": "https://github.com/Picono435/RandomTP",
   "updateUrl": "https://github.com/Picono435/RandomTP/releases",
   "authorList": ["Picono435"],
   "credits": "Thanks to everyone that helped me and PiconoDev growing.",

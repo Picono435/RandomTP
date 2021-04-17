@@ -14,11 +14,14 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = 'MC1.12.2-1.3.4'
+version = 'MC1.12.2-1.3.5'
 group = 'com.gmail.picono435.randomtp' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'RandomTP'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
