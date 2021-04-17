@@ -7,6 +7,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class Config {
 	
+	
+	public static ForgeConfigSpec.ConfigValue<String> default_world;
 	public static ForgeConfigSpec.ConfigValue<Integer> max_distance;
     public static ForgeConfigSpec.ConfigValue<Integer> min_distance;
 
@@ -22,9 +24,13 @@ public class Config {
     	config.comment("Configuration file");
     	
     	//DISTANCE CATEGORY
+    	default_world = config
+    			.comment("The default world that you are teleported when doing /rtp (Only supported when use-original is set to true) [playerworld = the world on where the player is]")
+    			.define("distance.default_world", "playerworld");
+    	
     	max_distance = config
-    			.comment(" Max distance that you want to a person be teleported. (0 = world border size / 2) [default: auto]")
-    			.defineInRange("distance.max_distance", 0, 0, Integer.MAX_VALUE);
+    			.comment("Max distance that you want to a person be teleported. (0 = world border size / 2) [default: auto]")
+    			.defineInRange("distance.max_distance", 10000, 0, Integer.MAX_VALUE);
     	
     	min_distance = config
     			.comment("Minimum distance that you want to a person be teleported. [default: 1]")
