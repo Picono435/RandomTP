@@ -9,7 +9,6 @@ import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +28,6 @@ public class MainMod {
       public static final String NEW_LINE;
       
       public static Logger logger;
-      public static MinecraftServer server;
       
 	  public static boolean check;
 
@@ -58,7 +56,6 @@ public class MainMod {
       @SubscribeEvent
       public void init(FMLServerStartingEvent event) {
         logger.info("Initalized Random Teleport Mod.");
-        server = event.getServer();
         
         logger.info("Configs files loaded.");
         
