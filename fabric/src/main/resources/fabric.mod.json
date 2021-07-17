@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "randomtp",
+  "version": "${version}",
+  "name": "Random Teleport Mod",
+  "description": "description='''\nA mod that teleports you to a random location without colliding with lava, water or the world border.",
+  "authors": [
+    "Picono435"
+  ],
+  "contact": {
+    "homepage": "https://www.piconodev.pt/",
+    "sources": "https://github.com/Picono435/RandomTP"
+  },
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
+  "icon": "logo.jpeg",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.gmail.picono435.randomtp.fabric.RandomTPModFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": ">=1.16"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
