@@ -4,6 +4,7 @@ plugins {
 
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    shadow
 }
 
 architectury {
@@ -27,6 +28,8 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
         transitive = false
     }
+
+    shadow 'org.spongepowered:configurate-yaml:4.1.1'
 }
 
 processResources {
@@ -40,7 +43,7 @@ processResources {
 shadowJar {
     exclude "fabric.mod.json"
 
-    configurations = [project.configurations.shadowCommon]
+    configurations = [project.configurations.shadowCommon, project.configurations.shadow]
     classifier "dev-shadow"
 }
 

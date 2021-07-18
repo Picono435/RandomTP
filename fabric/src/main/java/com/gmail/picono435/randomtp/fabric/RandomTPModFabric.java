@@ -10,7 +10,6 @@ import com.gmail.picono435.randomtp.config.ConfigHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import org.spongepowered.configurate.ConfigurateException;
 
 public class RandomTPModFabric implements ModInitializer {
 

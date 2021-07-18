@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
-import org.spongepowered.configurate.ConfigurateException;
 
 @Mod(RandomTPMod.MOD_ID)
 public class RandomTPModForge {
