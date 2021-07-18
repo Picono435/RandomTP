@@ -56,6 +56,8 @@ public class RandomTPModForge {
     @SubscribeEvent
     public void command(RegisterCommandsEvent event) {
         RTPCommand.register(event.getDispatcher());
-        RTPDCommand.register(event.getDispatcher());
+        if(Config.useDimension()) {
+            RTPDCommand.register(event.getDispatcher());
+        }
     }
 }
