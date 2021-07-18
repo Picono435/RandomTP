@@ -2,7 +2,7 @@ package com.gmail.picono435.randomtp.config;
 
 public class Messages {
 
-    public static String getSucessful() {
+    public static String getSuccessful() {
         return ConfigHandler.getMessages().node("command").node("successfully").getString();
     }
 
