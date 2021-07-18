@@ -22,8 +22,6 @@ subprojects {
         //mappings "de.oceanlabs.mcp:mcp_snapshot:20201028-1.16.3"
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:1.16.5+build.9:v2"
-
-        implementation 'org.spongepowered:configurate-yaml:4.1.1'
     }
 }
 
