@@ -29,6 +29,8 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
         transitive = false
     }
+
+    modImplementation include('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
