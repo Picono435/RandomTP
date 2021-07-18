@@ -5,6 +5,7 @@ import com.gmail.picono435.randomtp.RandomTPMod;
 
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
+import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
 import net.minecraftforge.common.MinecraftForge;
