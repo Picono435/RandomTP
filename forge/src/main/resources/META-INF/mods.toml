@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[35,)"
+loaderVersion = "[36,)"
 issueTrackerURL="https://github.com/Picono435/RandomTP/issues" #optional
 license="GNU GENERAL PUBLIC LICENSE v3"
 [[mods]] #mandatory
