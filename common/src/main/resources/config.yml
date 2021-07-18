@@ -1,0 +1,28 @@
+distance:
+  # The default world that you are teleported when doing /rtp (Only supported when use-original is set to true) [playerworld: the world on where the player is, default: playerworld]
+  default_world: playerworld
+  # Max distance that you want to a person be teleported. (0 = world border size / 2) [default: auto]
+  # Range: > 0
+  max_distance: 10000
+  # Minimum distance that you want to a person be teleported. [default: 1]
+  # Range: > 1
+  min_distance: 1
+
+inter-dimensions-command:
+  # Do you want to the command /rtpd be allowed? (This commands adds a inter-dimension RTP) [default: true]
+  inter-dim: true
+  # Do you want to use the whitelist or blacklist dimension?  [default: false]
+  use-whitelist: false
+  # The dimensions whitelist (Works with namespaces:paths only, use-whitelist:true=whitelist use-whitelist:true=blacklist)
+  whitelist-dimension:
+    - 'minecraft:the_end'
+    - 'twilight:dimension'
+
+others:
+  # The amount of tries to find a safe location (original system) [-1: infinite, default: -1]
+  max-tries: -1
+  # If you want to use the original RTP system or the /spreadplayers system. [default: true]
+  use-original: true
+  # How much cooldown do you want for the command [range: 0 ~ 1000, default: 0]
+  # Range: > 0
+  cooldown: 0
