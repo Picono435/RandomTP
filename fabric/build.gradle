@@ -4,7 +4,6 @@ plugins {
 
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-    shadow
 }
 
 architectury {
@@ -31,7 +30,7 @@ dependencies {
         transitive = false
     }
 
-    shadow 'org.spongepowered:configurate-yaml:4.1.1'
+    modImplementation include('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
@@ -43,7 +42,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadowCommon, project.configurations.shadow]
+    configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 

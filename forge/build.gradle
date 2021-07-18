@@ -29,7 +29,7 @@ dependencies {
         transitive = false
     }
 
-    shadow 'org.spongepowered:configurate-yaml:4.1.1'
+    modImplementation shadow('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
