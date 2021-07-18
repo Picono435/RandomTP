@@ -5,6 +5,7 @@ import com.gmail.picono435.randomtp.RandomTPMod;
 import com.gmail.picono435.randomtp.api.fabric.RandomTPAPIImpl;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
+import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -40,7 +41,9 @@ public class RandomTPModFabric implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             RTPCommand.register(dispatcher);
-            RTPDCommand.register(dispatcher);
+            if(Config.useDimension()) {
+                RTPDCommand.register(dispatcher);
+            }
         });
     }
 
