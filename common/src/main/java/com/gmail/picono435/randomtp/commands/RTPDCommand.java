@@ -3,7 +3,6 @@ package com.gmail.picono435.randomtp.commands;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import com.gmail.picono435.randomtp.api.RandomTPAPI;
 import com.gmail.picono435.randomtp.config.Config;
