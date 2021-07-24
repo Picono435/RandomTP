@@ -4,6 +4,7 @@ plugins {
 
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    shadow
 }
 
 architectury {
@@ -18,7 +19,7 @@ repositories {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modImplementation include("me.lucko:fabric-permissions-api:0.1-SNAPSHOT")
+    modImplementation shadow("me.lucko:fabric-permissions-api:0.1-SNAPSHOT") { transitive = false }
 
     implementation(project(path: ":common")) {
         transitive = false
@@ -30,7 +31,7 @@ dependencies {
         transitive = false
     }
 
-    modImplementation include('org.spongepowered:configurate-yaml:4.1.1')
+    modImplementation shadow('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
@@ -42,7 +43,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadowCommon]
+    configurations = [project.configurations.shadowCommon, project.configurations.shadow]
     classifier "dev-shadow"
 }
 
