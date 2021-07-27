@@ -55,7 +55,7 @@ public class RandomTPAPI {
                 }
             }
 
-            p.teleportTo(world, x, y, z, p.xRot, p.yRot);
+            p.teleportTo(world, x, y, z, p.getXRot(), p.getYRot());
             TextComponent successful = new TextComponent(Messages.getSuccessful().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
             p.sendMessage(successful, p.getUUID());
         } catch(Exception ex) {
