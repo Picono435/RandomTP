@@ -14,7 +14,7 @@ The best Random Teleport mod ever! With this mod you will be able to random tele
 
 ## Versions:
 
-This mod is available for Fabric and Forge in these versions: [1.12.x](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.15.x & 1.14.x](https://github.com/Picono435/RandomTP/tree/1.15.2), [1.16.x](https://github.com/Picono435/RandomTP/tree/1.16.5) and [1.17.x](https://github.com/Picono435/RandomTP/tree/1.17.1). Other versions may also work but are not tested, and we do not recommend you to use them.
+This mod is available for Fabric and Forge in these versions: [1.12](https://github.com/Picono435/RandomTP/tree/1.12.2), [1.15 & 1.14](https://github.com/Picono435/RandomTP/tree/1.15.2), [1.16](https://github.com/Picono435/RandomTP/tree/1.16.5) and [1.17](https://github.com/Picono435/RandomTP/tree/1.17.1). Other versions may also work but are not tested, and we do not recommend you to use them.
 
 ## Links:
 
