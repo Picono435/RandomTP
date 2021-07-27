@@ -13,13 +13,13 @@ architectury {
 }
 
 repositories {
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modImplementation shadow("me.lucko:fabric-permissions-api:0.1-SNAPSHOT") { transitive = false }
+    modImplementation shadow("com.github.Picono435:fabric-permissions-api:-SNAPSHOT") { transitive = false }
 
     implementation(project(path: ":common")) {
         transitive = false
