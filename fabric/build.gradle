@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
 configurations {
@@ -31,7 +31,7 @@ dependencies {
         transitive = false
     }
 
-    modImplementation shadow('org.spongepowered:configurate-yaml:4.1.1')
+    implementation shadow('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
