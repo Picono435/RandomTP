@@ -31,7 +31,7 @@ dependencies {
         transitive = false
     }
 
-    modImplementation shadow('org.spongepowered:configurate-yaml:4.1.1')
+    implementation shadow('org.spongepowered:configurate-yaml:4.1.1')
 }
 
 processResources {
@@ -45,6 +45,12 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon, project.configurations.shadow]
     classifier "dev-shadow"
+
+    relocate 'org.yaml', 'com.gmail.picono435.dependencies.yaml'
+    relocate 'org.spongepowered', 'com.gmail.picono435.dependencies.spongepowered'
+    relocate 'io.leangen', 'com.gmail.picono435.dependencies.leagen'
+    relocate 'org.checkerframework', 'com.gmail.picono435.dependencies.checkerframework'
+    relocate 'me.lucko', 'com.gmail.picono435.dependencies.lucko'
 }
 
 remapJar {
