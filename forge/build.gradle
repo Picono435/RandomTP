@@ -29,9 +29,6 @@ dependencies {
         transitive = false
     }
 
-    forgeDependencies(implementation(shadow('io.leangen.geantyref:geantyref:1.+')))
-    forgeDependencies(implementation(shadow('org.yaml:snakeyaml:1.+')))
-    forgeDependencies(implementation(shadow('org.spongepowered:configurate-core:4.1.1')))
     forgeDependencies(implementation(shadow('org.spongepowered:configurate-yaml:4.1.1')))
 }
 
@@ -54,6 +51,12 @@ remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier "forge"
+
+    relocate 'org.yaml', 'com.gmail.picono435.dependencies.yaml'
+    relocate 'org.spongepowered', 'com.gmail.picono435.dependencies.spongepowered'
+    relocate 'io.leangen', 'com.gmail.picono435.dependencies.leagen'
+    relocate 'org.checkerframework', 'com.gmail.picono435.dependencies.checkerframework'
+    relocate 'me.lucko', 'com.gmail.picono435.dependencies.lucko'
 }
 
 jar {
