@@ -3,8 +3,8 @@
   Description: The best Random Teleport Mod ever!
   Author: Picono435
   -->
-<div style="text-align:center;">
- <h1 style="text-align:center;">RandomTP</h1>
+<div align="center">
+ <h1>RandomTP</h1>
 </div>
 
 
