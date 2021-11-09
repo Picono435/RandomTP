@@ -37,4 +37,8 @@ Curseforge page: https://www.curseforge.com/minecraft/mc-mods/randomtp
 
 ## Licence:
 
-This software is protected by the GNU v3 license.
+This software is protected by the MIT license.
+
+[curseforge:files]: https://www.curseforge.com/minecraft/mc-mods/randomtp/files/all
+[modrinth:files]: https://modrinth.com/mod/randomtp/versions
+[releases]: https://github.com/Picono435/RandomTP/releases
