@@ -4,7 +4,8 @@
   Author: Picono435
   -->
 <div align="center">
- <h1>RandomTP</h1>
+ # RandomTP
+ 
  The best RandomTP mod ever!
  
  [![Release](https://img.shields.io/github/v/release/Picono435/RandomTP?style=for-the-badge&include_prereleases&sort=semver)][releases]
