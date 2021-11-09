@@ -5,7 +5,7 @@
   -->
 <div align="center">
  <h1>RandomTP</h1>
- 
+ <p>The best RandomTP mod ever!</p>
  [![Release](https://img.shields.io/github/v/release/Picono435/RandomTP?style=for-the-badge&include_prereleases&sort=semver)][releases]
  [![Available For](https://img.shields.io/static/v1?label=Available%20For&style=for-the-badge&color=34aa2f&message=1.17.x-1.12.x)][curseforge:files]
 
