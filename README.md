@@ -3,7 +3,12 @@
   Description: The best Random Teleport Mod ever!
   Author: Picono435
   -->
-# RandomTP
+<div style="text-align:center;">
+<h1>RandomTP</h1>
+</div>
+
+
+## Description
 The best Random Teleport mod ever! With this mod you will be able to random teleport between dimensions and without colliding with mostly anything! Our mod is being updated frequently and is always having issues fixes when reported. Our mod works with both sides! (Client-Side only and Server-Side only). Join our [discord](https://discord.gg/wQj53Hy) for more information about all our mods and plugins!
 
 ## Commands:
