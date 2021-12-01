@@ -11,4 +11,4 @@ include("common")
 include("fabric")
 include("forge")
 
-rootProject.name = "RandomTP-1.17.1"
+rootProject.name = "RandomTP-1.18"

@@ -10,9 +10,9 @@ import com.gmail.picono435.randomtp.config.ConfigHandler;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
 
@@ -43,7 +43,7 @@ public class RandomTPModForge {
     }
 
     @SubscribeEvent
-    public void init(FMLServerStartingEvent event) {
+    public void init(ServerStartingEvent event) {
         RandomTP.getLogger().info("Registering permission nodes...");
 
         PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
