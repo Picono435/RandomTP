@@ -32,7 +32,7 @@ dependencies {
         transitive = false
     }
 
-    implementation common('org.spongepowered:configurate-yaml:4.1.2')
+    implementation shadowCommon('org.spongepowered:configurate-yaml:4.1.2')
 }
 
 processResources {
@@ -44,7 +44,7 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadowCommon, project.configurations.shadow]
+    configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 
     relocate 'org.yaml', 'com.gmail.picono435.dependencies.yaml'
