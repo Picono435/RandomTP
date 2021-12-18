@@ -25,7 +25,7 @@ dependencies {
         transitive = false
     }
 
-    forgeDependencies(implementation(shadowCommon('org.spongepowered:configurate-yaml:4.1.2')))
+    forgeRuntimeLibrary(implementation(shadowCommon('org.spongepowered:configurate-yaml:4.1.2')))
 }
 
 processResources {
