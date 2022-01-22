@@ -8,16 +8,39 @@ import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftforge.server.permission.nodes.PermissionTypes;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 @Mod(RandomTPMod.MOD_ID)
 public class RandomTPModForge {
+
+    public static PermissionNode<Boolean> BASIC_COMMAND_PERM = new PermissionNode<>(
+            RandomTPMod.MOD_ID,
+            "command.basic",
+            PermissionTypes.BOOLEAN,
+            (arg, uUID, permissionDynamicContexts) -> true);
+    public static PermissionNode<Boolean> INTERDIM_COMMAND_PERM = new PermissionNode<>(
+            RandomTPMod.MOD_ID,
+            "command.interdim",
+            PermissionTypes.BOOLEAN,
+            (arg, uUID, permissionDynamicContexts) -> true);
+    public static PermissionNode<Boolean> COOLDOWN_EXEMPT_PERM = new PermissionNode<>(
+            RandomTPMod.MOD_ID,
+            "cooldown.exempt",
+            PermissionTypes.BOOLEAN,
+            (arg, uUID, permissionDynamicContexts) -> false);
 
     public RandomTPModForge() {
         RandomTPMod.init();
@@ -44,12 +67,6 @@ public class RandomTPModForge {
 
     @SubscribeEvent
     public void init(ServerStartingEvent event) {
-        RandomTP.getLogger().info("Registering permission nodes...");
-
-        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
-        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtpdimension");
-        PermissionAPI.registerNode("randomtp.cooldown.exempt", DefaultPermissionLevel.OP, "The permission used to be exempt from the cooldown");
-
         RandomTP.getLogger().info("RandomTP successfully loaded.");
     }
 
@@ -59,5 +76,11 @@ public class RandomTPModForge {
         if(Config.useDimension()) {
             RTPDCommand.register(event.getDispatcher());
         }
+    }
+
+    @SubscribeEvent
+    public void permission(PermissionGatherEvent.Nodes event) {
+        RandomTP.getLogger().info("Registering permission nodes...");
+        event.addNodes(BASIC_COMMAND_PERM, INTERDIM_COMMAND_PERM, COOLDOWN_EXEMPT_PERM);
     }
 }
