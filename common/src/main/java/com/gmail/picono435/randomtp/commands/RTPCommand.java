@@ -25,9 +25,6 @@ public class RTPCommand {
 		dispatcher.register(Commands.literal("randomtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
 				.executes(context -> runCommand(context.getSource().getPlayerOrException())
 				));
-		dispatcher.register(Commands.literal("randomteleport").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
-				.executes(context -> runCommand( context.getSource().getPlayerOrException())
-				));
 	}
 	
 	private static int runCommand(ServerPlayer p) {

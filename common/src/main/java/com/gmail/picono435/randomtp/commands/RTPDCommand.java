@@ -28,19 +28,12 @@ public class RTPDCommand {
 							runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
 						)
 				));
-		dispatcher.register(Commands.literal("randomteleportdimension").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
+		dispatcher.register(Commands.literal("dimensionrtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
 				.then(
 						Commands.argument("dimension", DimensionArgument.dimension())
-						.executes(context ->
-								runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
-						)
-				));
-		dispatcher.register(Commands.literal("randomtpd").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
-				.then(
-						Commands.argument("dimension", DimensionArgument.dimension())
-						.executes(context ->
-								runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
-						)
+								.executes(context ->
+										runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
+								)
 				));
 	}
 	
