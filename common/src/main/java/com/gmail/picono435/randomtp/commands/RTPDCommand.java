@@ -48,11 +48,15 @@ public class RTPDCommand {
 				cooldowns.remove(p.getName().getString());
 				String dimensionId = dim.dimension().location().getNamespace() + ":" + dim.dimension().location().getPath();
 				if(!inWhitelist(dimensionId)) {
-					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')), p.getUUID());
+					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), p.getUUID());
 					return 1;
 				}
 				if(Config.useOriginal()) {
-					RandomTPAPI.randomTeleport(p, dim);
+					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
+					p.sendMessage(finding, p.getUUID());
+					new Thread(() -> {
+						RandomTPAPI.randomTeleport(p, dim);
+					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}

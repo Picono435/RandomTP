@@ -3,6 +3,7 @@ package com.gmail.picono435.randomtp.forge;
 import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 
+import com.gmail.picono435.randomtp.commands.RTPBCommand;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
@@ -75,6 +76,9 @@ public class RandomTPModForge {
         RTPCommand.register(event.getDispatcher());
         if(Config.useDimension()) {
             RTPDCommand.register(event.getDispatcher());
+        }
+        if(Config.useBiome()) {
+            RTPBCommand.register(event.getDispatcher());
         }
     }
 

@@ -37,11 +37,15 @@ public class RTPCommand {
 			} else {
 				cooldowns.remove(p.getName().getString());
 				if(Config.useOriginal()) {
-					if(!Config.getDefaultWorld().equals("playerworld")) {
-						RandomTPAPI.randomTeleport(p, RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer()));
-					} else {
-						RandomTPAPI.randomTeleport(p, p.getLevel());
-					}
+					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
+					p.sendMessage(finding, p.getUUID());
+					new Thread(() -> {
+						if(!Config.getDefaultWorld().equals("playerworld")) {
+							RandomTPAPI.randomTeleport(p, RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer()));
+						} else {
+							RandomTPAPI.randomTeleport(p, p.getLevel());
+						}
+					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}
