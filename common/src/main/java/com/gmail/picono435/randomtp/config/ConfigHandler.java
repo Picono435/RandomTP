@@ -28,13 +28,14 @@ public class ConfigHandler {
             FileUtils.copyURLToFile(input, to);
         }
         URL input2 = ConfigHandler.class.getClassLoader().getResource("messages.yml");
-        /*File to2 = getConfigDirectory().resolve("RandomTP").resolve("messages.yml").toFile();
+        File to2 = getConfigDirectory().resolve("RandomTP").resolve("messages.yml").toFile();
         if(!to2.exists()) {
             FileUtils.copyURLToFile(input2, to2);
-        }*/
+        }
 
         config = YamlConfigurationLoader.builder()
                 .indent(2)
+                .url(input)
                 .path(getConfigDirectory().resolve("RandomTP").resolve("config.yml"))
                 .build().load();
 
