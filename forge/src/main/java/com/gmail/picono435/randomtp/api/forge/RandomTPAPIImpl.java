@@ -23,8 +23,4 @@ public class RandomTPAPIImpl {
 		return PermissionAPI.hasPermission(player, permission);
 	}
 
-	public static Biome getBiomeFromKey(ResourceLocation biome) {
-		return ForgeRegistries.BIOMES.getValue(biome);
-	}
-
 }
