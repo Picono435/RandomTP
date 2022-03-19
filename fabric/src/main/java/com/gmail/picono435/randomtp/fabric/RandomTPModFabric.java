@@ -3,6 +3,7 @@ package com.gmail.picono435.randomtp.fabric;
 import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 import com.gmail.picono435.randomtp.api.fabric.RandomTPAPIImpl;
+import com.gmail.picono435.randomtp.commands.RTPBCommand;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
@@ -10,7 +11,6 @@ import com.gmail.picono435.randomtp.config.ConfigHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import org.spongepowered.configurate.ConfigurateException;
 
 public class RandomTPModFabric implements ModInitializer {
 
@@ -34,6 +34,7 @@ public class RandomTPModFabric implements ModInitializer {
 
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.basic", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.interdim", 0);
+            RandomTPAPIImpl.registeredNodes.put("randomtp.command.interbiome", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.cooldown.exempt", 1);
 
             RandomTP.getLogger().info("RandomTP successfully loaded.");
@@ -43,6 +44,9 @@ public class RandomTPModFabric implements ModInitializer {
             RTPCommand.register(dispatcher);
             if(Config.useDimension()) {
                 RTPDCommand.register(dispatcher);
+            }
+            if(Config.useBiome()) {
+                RTPBCommand.register(dispatcher);
             }
         });
     }

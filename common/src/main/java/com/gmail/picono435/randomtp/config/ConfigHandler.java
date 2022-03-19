@@ -35,11 +35,13 @@ public class ConfigHandler {
 
         config = YamlConfigurationLoader.builder()
                 .indent(2)
+                .url(input)
                 .path(getConfigDirectory().resolve("RandomTP").resolve("config.yml"))
                 .build().load();
 
         messages = YamlConfigurationLoader.builder()
                 .indent(2)
+                .url(input2)
                 .path(getConfigDirectory().resolve("RandomTP").resolve("messages.yml"))
                 .build().load();
     }

@@ -3,6 +3,7 @@ package com.gmail.picono435.randomtp.forge;
 import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 
+import com.gmail.picono435.randomtp.commands.RTPBCommand;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
@@ -23,12 +24,6 @@ public class RandomTPModForge {
 
         RandomTP.getLogger().info("Loading config files...");
 
-        //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandlerImpl.config, "RandomTP" + File.separatorChar + "config.toml");
-        //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandlerImpl.messages, "RandomTP" + File.separatorChar + "messages.toml");
-
-        //ConfigHandlerImpl.loadConfig(ConfigHandlerImpl.config, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "config.toml").toString());
-        //ConfigHandlerImpl.loadConfig(ConfigHandlerImpl.messages, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "messages.toml").toString());
-
         try {
             ConfigHandler.loadConfiguration();
         } catch (Exception e) {
@@ -43,15 +38,19 @@ public class RandomTPModForge {
 
     @SubscribeEvent
     public void init(FMLServerStartingEvent event) {
+        RandomTP.getLogger().info("Registering permission nodes...");
+
         RTPCommand.register(event.getCommandDispatcher());
         if(Config.useDimension()) {
             RTPDCommand.register(event.getCommandDispatcher());
         }
+        if(Config.useBiome()) {
+            RTPBCommand.register(event.getCommandDispatcher());
+        }
 
-        RandomTP.getLogger().info("Registering permission nodes...");
-
-        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
-        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtpdimension");
+        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /rtp");
+        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /rtpd");
+        PermissionAPI.registerNode("randomtp.command.interbiome", DefaultPermissionLevel.ALL, "The permission to execute the command /rtpb");
         PermissionAPI.registerNode("randomtp.cooldown.exempt", DefaultPermissionLevel.OP, "The permission used to be exempt from the cooldown");
 
         RandomTP.getLogger().info("RandomTP successfully loaded.");

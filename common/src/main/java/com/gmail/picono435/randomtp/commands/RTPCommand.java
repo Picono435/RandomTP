@@ -15,9 +15,9 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 public class RTPCommand {
-	
+
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	
+
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("rtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
 				.executes(context -> runCommand(context.getSource().getPlayerOrException())
@@ -25,11 +25,8 @@ public class RTPCommand {
 		dispatcher.register(Commands.literal("randomtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
 				.executes(context -> runCommand(context.getSource().getPlayerOrException())
 				));
-		dispatcher.register(Commands.literal("randomteleport").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
-				.executes(context -> runCommand( context.getSource().getPlayerOrException())
-				));
 	}
-	
+
 	private static int runCommand(ServerPlayer p) {
 		try {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
@@ -40,11 +37,15 @@ public class RTPCommand {
 			} else {
 				cooldowns.remove(p.getName().getString());
 				if(Config.useOriginal()) {
-					if(!Config.getDefaultWorld().equals("playerworld")) {
-						RandomTPAPI.randomTeleport(p, p.getServer().getLevel(RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer())));
-					} else {
-						RandomTPAPI.randomTeleport(p, p.getLevel());
-					}
+					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
+					p.sendMessage(finding);
+					new Thread(() -> {
+						if(!Config.getDefaultWorld().equals("playerworld")) {
+							RandomTPAPI.randomTeleport(p, p.getServer().getLevel(RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer())));
+						} else {
+							RandomTPAPI.randomTeleport(p, p.getLevel());
+						}
+					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}

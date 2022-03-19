@@ -18,11 +18,22 @@ inter-dimensions-command:
     - 'minecraft:the_end'
     - 'twilight:dimension'
 
+inter-biomes-command:
+  # Do you want to the command /rtpb be allowed? (This commands adds a inter-biome RTP) [default: true]
+  inter-biome: true
+
 others:
   # The amount of tries to find a safe location (original system) [-1: infinite, default: -1]
   max-tries: -1
   # If you want to use the original RTP system or the /spreadplayers system. [default: true]
   use-original: true
+  # Do you want to use the whitelist or blacklist biomes?  [default: false]
+  use-biome-whitelist: false
+  # The biome whitelist (Works with namespaces:paths only, use-biome-whitelist:true=whitelist use-biome-whitelist:true=blacklist)
+  biome-whitelist:
+    - 'minecraft:ocean'
+    - 'minecraft:deep_ocean'
+
   # How much cooldown do you want for the command [range: 0 ~ 1000, default: 0]
   # Range: > 0
   cooldown: 0

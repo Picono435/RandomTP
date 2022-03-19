@@ -28,6 +28,19 @@ public class Config {
         return ConfigHandler.getConfig().node("others").node("use-original").getBoolean();
     }
 
+    public static boolean useBiomeWhitelist() {
+        return ConfigHandler.getConfig().node("others").node("use-biome-whitelist").getBoolean();
+    }
+
+    public static List<String> getAllowedBiomes() {
+        try {
+            return ConfigHandler.getConfig().node("others").node("biome-whitelist").getList(TypeToken.get(String.class));
+        } catch (SerializationException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
     public static int getMaxTries() {
         return ConfigHandler.getConfig().node("others").node("max-tries").getInt();
     }
@@ -47,6 +60,10 @@ public class Config {
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    public static boolean useBiome() {
+        return ConfigHandler.getConfig().node("inter-biomes-command").node("inter-biome").getBoolean();
     }
 
 }
