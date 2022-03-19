@@ -3,6 +3,7 @@ package com.gmail.picono435.randomtp.forge;
 import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 
+import com.gmail.picono435.randomtp.commands.RTPBCommand;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
@@ -46,8 +47,9 @@ public class RandomTPModForge {
     public void init(FMLServerStartingEvent event) {
         RandomTP.getLogger().info("Registering permission nodes...");
 
-        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtp");
-        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /randomtpdimension");
+        PermissionAPI.registerNode("randomtp.command.basic", DefaultPermissionLevel.ALL, "The permission to execute the command /rtp");
+        PermissionAPI.registerNode("randomtp.command.interdim", DefaultPermissionLevel.ALL, "The permission to execute the command /rtpd");
+        PermissionAPI.registerNode("randomtp.command.interbiome", DefaultPermissionLevel.ALL, "The permission to execute the command /rtpb");
         PermissionAPI.registerNode("randomtp.cooldown.exempt", DefaultPermissionLevel.OP, "The permission used to be exempt from the cooldown");
 
         RandomTP.getLogger().info("RandomTP successfully loaded.");
@@ -58,6 +60,9 @@ public class RandomTPModForge {
         RTPCommand.register(event.getDispatcher());
         if(Config.useDimension()) {
             RTPDCommand.register(event.getDispatcher());
+        }
+        if(Config.useBiome()) {
+            RTPBCommand.register(event.getDispatcher());
         }
     }
 }

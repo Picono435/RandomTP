@@ -1,6 +1,5 @@
 package com.gmail.picono435.randomtp.api.fabric;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,5 +18,4 @@ public class RandomTPAPIImpl {
 	public static boolean hasPermission(ServerPlayer player, String permission) {
 		return Permissions.check(player, permission, registeredNodes.get(permission));
 	}
-
 }
