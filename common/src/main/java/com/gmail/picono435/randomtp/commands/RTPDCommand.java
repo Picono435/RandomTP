@@ -17,33 +17,26 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 public class RTPDCommand {
-	
+
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("rtpd").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
 				.then(
 						Commands.argument("dimension", DimensionArgument.dimension())
-						.executes(context -> 
-							runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
-						)
+								.executes(context ->
+										runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
+								)
 				));
-		dispatcher.register(Commands.literal("randomteleportdimension").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
+		dispatcher.register(Commands.literal("dimensionrtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
 				.then(
 						Commands.argument("dimension", DimensionArgument.dimension())
-						.executes(context ->
-								runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
-						)
-				));
-		dispatcher.register(Commands.literal("randomtpd").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
-				.then(
-						Commands.argument("dimension", DimensionArgument.dimension())
-						.executes(context ->
-								runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
-						)
+								.executes(context ->
+										runCommand(context.getSource().getPlayerOrException(), DimensionArgument.getDimension(context, "dimension"))
+								)
 				));
 	}
-	
+
 	private static int runCommand(ServerPlayer p, ServerLevel dim) {
 		try {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
@@ -55,11 +48,15 @@ public class RTPDCommand {
 				cooldowns.remove(p.getName().getString());
 				String dimensionId = dim.dimension().location().getNamespace() + ":" + dim.dimension().location().getPath();
 				if(!inWhitelist(dimensionId)) {
-					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId + "").replace('&', '§')), p.getUUID());
+					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), p.getUUID());
 					return 1;
 				}
 				if(Config.useOriginal()) {
-					RandomTPAPI.randomTeleport(p, dim);
+					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
+					p.sendMessage(finding, p.getUUID());
+					new Thread(() -> {
+						RandomTPAPI.randomTeleport(p, dim);
+					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}
@@ -84,14 +81,14 @@ public class RTPDCommand {
 		}
 		return 1;
 	}
-	
-	  private static boolean inWhitelist(String dimension) {
-		  //WHITELIST
-		  if(Config.useWhitelist()) {
-			  return Config.getAllowedDimensions().contains(dimension);
-		  //BLACKLIST
-		  } else {
-			  return !Config.getAllowedDimensions().contains(dimension);
-		  }
-	  }
+
+	private static boolean inWhitelist(String dimension) {
+		//WHITELIST
+		if(Config.useWhitelist()) {
+			return Config.getAllowedDimensions().contains(dimension);
+			//BLACKLIST
+		} else {
+			return !Config.getAllowedDimensions().contains(dimension);
+		}
+	}
 }

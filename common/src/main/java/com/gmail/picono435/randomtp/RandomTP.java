@@ -1,6 +1,5 @@
 package com.gmail.picono435.randomtp;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
