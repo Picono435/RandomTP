@@ -23,14 +23,14 @@ public class RTPBCommand {
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-		dispatcher.register(Commands.literal("rtpb").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
+		dispatcher.register(Commands.literal("rtpb").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interbiome"))
 				.then(
 						Commands.argument("biome", ResourceOrTagLocationArgument.resourceOrTag(Registry.BIOME_REGISTRY))
 								.executes(context ->
 										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagLocationArgument.getBiome(context, "biome"))
 								)
 				));
-		dispatcher.register(Commands.literal("biomertp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interdim"))
+		dispatcher.register(Commands.literal("biomertp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interbiome"))
 				.then(
 						Commands.argument("biome", ResourceOrTagLocationArgument.resourceOrTag(Registry.BIOME_REGISTRY))
 								.executes(context ->

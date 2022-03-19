@@ -19,6 +19,8 @@ public class RandomTPAPIImpl {
 				return PermissionAPI.getPermission(source.getPlayerOrException(), RandomTPModForge.BASIC_COMMAND_PERM);
 			} else if(permission.equalsIgnoreCase("randomtp.command.interdim")) {
 				return PermissionAPI.getPermission(source.getPlayerOrException(), RandomTPModForge.INTERDIM_COMMAND_PERM);
+			} else if(permission.equalsIgnoreCase("randomtp.command.interbiome")) {
+				return PermissionAPI.getPermission(source.getPlayerOrException(), RandomTPModForge.INTERBIOME_COMMAND_PERM);
 			} else if(permission.equalsIgnoreCase("randomtp.cooldown.exempt")) {
 				return PermissionAPI.getPermission(source.getPlayerOrException(), RandomTPModForge.COOLDOWN_EXEMPT_PERM);
 			} else {

@@ -37,6 +37,11 @@ public class RandomTPModForge {
             "command.interdim",
             PermissionTypes.BOOLEAN,
             (arg, uUID, permissionDynamicContexts) -> true);
+    public static PermissionNode<Boolean> INTERBIOME_COMMAND_PERM = new PermissionNode<>(
+            RandomTPMod.MOD_ID,
+            "command.interbiome",
+            PermissionTypes.BOOLEAN,
+            (arg, uUID, permissionDynamicContexts) -> true);
     public static PermissionNode<Boolean> COOLDOWN_EXEMPT_PERM = new PermissionNode<>(
             RandomTPMod.MOD_ID,
             "cooldown.exempt",
@@ -47,12 +52,6 @@ public class RandomTPModForge {
         RandomTPMod.init();
 
         RandomTP.getLogger().info("Loading config files...");
-
-        //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandlerImpl.config, "RandomTP" + File.separatorChar + "config.toml");
-        //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandlerImpl.messages, "RandomTP" + File.separatorChar + "messages.toml");
-
-        //ConfigHandlerImpl.loadConfig(ConfigHandlerImpl.config, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "config.toml").toString());
-        //ConfigHandlerImpl.loadConfig(ConfigHandlerImpl.messages, FMLPaths.CONFIGDIR.get().resolve("RandomTP" + File.separatorChar + "messages.toml").toString());
 
         try {
             ConfigHandler.loadConfiguration();
@@ -85,6 +84,6 @@ public class RandomTPModForge {
     @SubscribeEvent
     public void permission(PermissionGatherEvent.Nodes event) {
         RandomTP.getLogger().info("Registering permission nodes...");
-        event.addNodes(BASIC_COMMAND_PERM, INTERDIM_COMMAND_PERM, COOLDOWN_EXEMPT_PERM);
+        event.addNodes(BASIC_COMMAND_PERM, INTERDIM_COMMAND_PERM, INTERBIOME_COMMAND_PERM, COOLDOWN_EXEMPT_PERM);
     }
 }

@@ -34,6 +34,7 @@ public class RandomTPModFabric implements ModInitializer {
 
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.basic", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.interdim", 0);
+            RandomTPAPIImpl.registeredNodes.put("randomtp.command.interbiome", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.cooldown.exempt", 1);
 
             RandomTP.getLogger().info("RandomTP successfully loaded.");
