@@ -10,7 +10,7 @@ import net.minecraft.commands.arguments.ResourceOrTagLocationArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -48,7 +48,7 @@ public class RandomTPAPI {
             int z = r.nextInt(highZ-lowZ) + lowZ;
             if(biome != null) {
                 ResourceOrTagLocationArgument.Result<Biome> result = new ResourceResult<>(getBiomeResourceKey(biome));
-                BlockPos biomePos = world.findNearestBiome(result, new BlockPos(x, y, z), 6400, 8).getFirst();
+                BlockPos biomePos = world.findClosestBiome3d(result, new BlockPos(x, y, z), 6400, 32, 64).getFirst();
                 x = biomePos.getX();
                 y = biomePos.getY();
                 z = biomePos.getZ();
@@ -62,7 +62,7 @@ public class RandomTPAPI {
                     z = r.nextInt(highZ-lowZ) + lowZ;
                     if(biome != null) {
                         ResourceOrTagLocationArgument.Result<Biome> result = new ResourceResult<>(getBiomeResourceKey(biome));
-                        BlockPos biomePos = world.findNearestBiome(result, new BlockPos(x, y, z), 6400, 8).getFirst();
+                        BlockPos biomePos = world.findClosestBiome3d(result, new BlockPos(x, y, z), 6400, 32, 64).getFirst();
                         x = biomePos.getX();
                         y = biomePos.getY();
                         z = biomePos.getZ();
@@ -73,15 +73,15 @@ public class RandomTPAPI {
                     maxTries--;
                 }
                 if(maxTries == 0) {
-                    TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendMessage(msg, player.getUUID());
+                    Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                    player.sendSystemMessage(msg, ChatType.CHAT);
                     return;
                 }
             }
 
             player.teleportTo(world, x, y, z, player.getXRot(), player.getYRot());
-            TextComponent successful = new TextComponent(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
-            player.sendMessage(successful, player.getUUID());
+            Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
+            player.sendSystemMessage(successful, ChatType.CHAT);
         } catch(Exception ex) {
             RandomTP.getLogger().info("Error executing command.");
             ex.printStackTrace();

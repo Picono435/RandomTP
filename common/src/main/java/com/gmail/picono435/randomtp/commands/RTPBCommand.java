@@ -4,12 +4,14 @@ import com.gmail.picono435.randomtp.api.RandomTPAPI;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.ResourceOrTagLocationArgument;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RTPBCommand {
-	
+
+	private static final DynamicCommandExceptionType ERROR_BIOME_INVALID = new DynamicCommandExceptionType((object) -> {
+		return Component.translatable("commands.locate.biome.invalid", new Object[]{object});
+	});
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -27,14 +32,14 @@ public class RTPBCommand {
 				.then(
 						Commands.argument("biome", ResourceOrTagLocationArgument.resourceOrTag(Registry.BIOME_REGISTRY))
 								.executes(context ->
-										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagLocationArgument.getBiome(context, "biome"))
+										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagLocationArgument.getRegistryType(context, "biome", Registry.BIOME_REGISTRY, ERROR_BIOME_INVALID))
 								)
 				));
 		dispatcher.register(Commands.literal("biomertp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interbiome"))
 				.then(
 						Commands.argument("biome", ResourceOrTagLocationArgument.resourceOrTag(Registry.BIOME_REGISTRY))
 								.executes(context ->
-										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagLocationArgument.getBiome(context, "biome"))
+										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagLocationArgument.getRegistryType(context, "biome", Registry.BIOME_REGISTRY, ERROR_BIOME_INVALID))
 								)
 				));
 	}
@@ -43,8 +48,8 @@ public class RTPBCommand {
 		try {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
-				TextComponent cooldownmes = new TextComponent(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-				p.sendMessage(cooldownmes, p.getUUID());
+				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
+				p.sendSystemMessage(cooldownmes, ChatType.CHAT);
 				return 1;
 			} else {
 				cooldowns.remove(p.getName().getString());
@@ -52,12 +57,12 @@ public class RTPBCommand {
 				ResourceLocation biomeLocation = biomeKey.location();
 				String biomeId = biomeLocation.getNamespace() + ":" + biomeLocation.getPath();
 				if(!inWhitelist(biomeId)) {
-					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), p.getUUID());
+					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), ChatType.CHAT);
 					return 1;
 				}
 				if(Config.useOriginal()) {
-					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
-					p.sendMessage(finding, p.getUUID());
+					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
+					p.sendSystemMessage(finding, ChatType.CHAT);
 					new Thread(() -> {
 						RandomTPAPI.randomTeleport(p, p.getLevel(), RandomTPAPI.getBiomeFromKey(biomeKey));
 					}).start();

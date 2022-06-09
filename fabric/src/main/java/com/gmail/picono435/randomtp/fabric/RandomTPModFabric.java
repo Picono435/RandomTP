@@ -9,7 +9,7 @@ import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public class RandomTPModFabric implements ModInitializer {
@@ -40,7 +40,8 @@ public class RandomTPModFabric implements ModInitializer {
             RandomTP.getLogger().info("RandomTP successfully loaded.");
         });
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            if(!environment.includeDedicated) return;
             RTPCommand.register(dispatcher);
             if(Config.useDimension()) {
                 RTPDCommand.register(dispatcher);
