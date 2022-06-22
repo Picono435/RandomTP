@@ -43,18 +43,18 @@ public class RTPDCommand {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
 				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-				p.sendSystemMessage(cooldownmes, ChatType.CHAT);
+				p.sendSystemMessage(cooldownmes, ChatType.SYSTEM);
 				return 1;
 			} else {
 				cooldowns.remove(p.getName().getString());
 				String dimensionId = dim.dimension().location().getNamespace() + ":" + dim.dimension().location().getPath();
 				if(!inWhitelist(dimensionId)) {
-					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), ChatType.CHAT);
+					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), ChatType.SYSTEM);
 					return 1;
 				}
 				if(Config.useOriginal()) {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
-					p.sendSystemMessage(finding, ChatType.CHAT);
+					p.sendSystemMessage(finding, ChatType.SYSTEM);
 					new Thread(() -> {
 						RandomTPAPI.randomTeleport(p, dim);
 					}).start();
@@ -69,11 +69,11 @@ public class RTPDCommand {
 				if(Config.getMaxDistance() == 0) {
 					p.getServer().getCommands().performCommand(p.getServer().createCommandSourceStack(), "spreadplayers " + p.getLevel().getWorldBorder().getCenterX() + " " + p.getLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + maxDistance + " false " + p.getName().getString().toLowerCase());
 					Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
-					p.sendSystemMessage(successful, ChatType.CHAT);
+					p.sendSystemMessage(successful, ChatType.SYSTEM);
 				} else {
 					p.getServer().getCommands().performCommand(p.getServer().createCommandSourceStack(), "spreadplayers " + p.getLevel().getWorldBorder().getCenterX() + " " + p.getLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + Config.getMaxDistance() + " false " + p.getName().getString().toLowerCase());
 					Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
-					p.sendSystemMessage(successful, ChatType.CHAT);
+					p.sendSystemMessage(successful, ChatType.SYSTEM);
 				}
 				cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 			}

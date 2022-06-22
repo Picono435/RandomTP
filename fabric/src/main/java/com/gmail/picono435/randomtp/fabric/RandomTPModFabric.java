@@ -41,7 +41,6 @@ public class RandomTPModFabric implements ModInitializer {
         });
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            if(!environment.includeDedicated) return;
             RTPCommand.register(dispatcher);
             if(Config.useDimension()) {
                 RTPDCommand.register(dispatcher);

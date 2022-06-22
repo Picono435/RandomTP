@@ -22,9 +22,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 public class RandomTPAPI {
 
@@ -54,18 +52,22 @@ public class RandomTPAPI {
                 z = biomePos.getZ();
             }
             int maxTries = Config.getMaxTries();
-            while (!isSafe(world, x, y, z) && (maxTries == -1 || maxTries > 0)) {
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(x, y, z);
+            while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
                 y++;
-                if(y >= 120 || !isInBiomeWhitelist(getBiomeId(getBiomeFromKey(world.getBiome(new BlockPos(x, y, z)).unwrapKey().get())).toString())) {
+                mutableBlockPos.setY(y);
+                if(y >= 120 || !isInBiomeWhitelist(getBiomeId(getBiomeFromKey(world.getBiome(new BlockPos(x, y, z)).unwrapKey().get())))) {
                     x = r.nextInt(highX-lowX) + lowX;
                     y = 50;
                     z = r.nextInt(highZ-lowZ) + lowZ;
+                    mutableBlockPos.set(x, y, z);
                     if(biome != null) {
                         ResourceOrTagLocationArgument.Result<Biome> result = new ResourceResult<>(getBiomeResourceKey(biome));
                         BlockPos biomePos = world.findClosestBiome3d(result, new BlockPos(x, y, z), 6400, 32, 64).getFirst();
                         x = biomePos.getX();
                         y = biomePos.getY();
                         z = biomePos.getZ();
+                        mutableBlockPos.set(x, y, z);
                     }
                     continue;
                 }
@@ -74,14 +76,14 @@ public class RandomTPAPI {
                 }
                 if(maxTries == 0) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendSystemMessage(msg, ChatType.CHAT);
+                    player.sendSystemMessage(msg, ChatType.SYSTEM);
                     return;
                 }
             }
 
             player.teleportTo(world, x, y, z, player.getXRot(), player.getYRot());
             Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
-            player.sendSystemMessage(successful, ChatType.CHAT);
+            player.sendSystemMessage(successful, ChatType.SYSTEM);
         } catch(Exception ex) {
             RandomTP.getLogger().info("Error executing command.");
             ex.printStackTrace();
@@ -145,44 +147,45 @@ public class RandomTPAPI {
         throw new AssertionError();
     }
 
-    public static boolean isSafe(ServerLevel world, int newX, int newY, int newZ) {
-        if(newX >= world.getWorldBorder().getMaxX() || newZ >= world.getWorldBorder().getMaxZ()) return false;
-        if ((isEmpty(world, newX, newY, newZ)) &&
-                (!isDangerBlock(world, newX, newY - 1, newZ))) {
+    public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
+        if ((isEmpty(world, mutableBlockPos)) &&
+                (!isDangerBlock(world, mutableBlockPos))) {
             return true;
         }
         return false;
     }
 
-    public static boolean isEmpty(Level world, int newX, int newY, int newZ) {
-        if ((world.isEmptyBlock(new BlockPos(newX, newY, newZ))) && (world.isEmptyBlock(new BlockPos(newX, newY + 1, newZ))) &&
-                (world.isEmptyBlock(new BlockPos(newX + 1, newY, newZ))) && (world.isEmptyBlock(new BlockPos(newX - 1, newY, newZ))) &&
-                (world.isEmptyBlock(new BlockPos(newX, newY, newZ + 1))) && (world.isEmptyBlock(new BlockPos(newX, newY, newZ - 1)))) {
+    public static boolean isEmpty(Level world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if ((world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY() + 1, mutableBlockPos.getZ()))) &&
+                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() + 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() - 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) &&
+                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() + 1))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() - 1)))) {
             return true;
         }
         return false;
     }
 
-    public static boolean isDangerBlock(Level world, int newX, int newY, int newZ) {
-        for (Block block : getDangerBlocks()) {
-            if (block.equals(world.getBlockState(new BlockPos(newX, newY, newZ)).getBlock())) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isDangerBlock(Level world, BlockPos.MutableBlockPos mutableBlockPos) {
+        return getDangerBlocks().contains(world.getBlockState(mutableBlockPos).getBlock());
     }
 
-    public static Block[] getDangerBlocks() {
-        return new Block[] {Blocks.LAVA, Blocks.WATER, Blocks.AIR};
+    public static List<Block> getDangerBlocks() {
+        return Arrays.asList(Blocks.LAVA, Blocks.WATER, Blocks.AIR);
     }
 
-    private static boolean isInBiomeWhitelist(String biome) {
+    private static boolean isInBiomeWhitelist(ResourceLocation biome) {
         //WHITELIST
         if(Config.useBiomeWhitelist()) {
-            return Config.getAllowedBiomes().contains(biome);
+            if(biome == null) {
+                return false;
+            }
+            return Config.getAllowedBiomes().contains(biome.toString());
             //BLACKLIST
         } else {
-            return !Config.getAllowedBiomes().contains(biome);
+            if(biome == null) {
+                return true;
+            }
+            return !Config.getAllowedBiomes().contains(biome.toString());
         }
     }
 

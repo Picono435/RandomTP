@@ -49,7 +49,7 @@ public class RTPBCommand {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
 				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-				p.sendSystemMessage(cooldownmes, ChatType.CHAT);
+				p.sendSystemMessage(cooldownmes, ChatType.SYSTEM);
 				return 1;
 			} else {
 				cooldowns.remove(p.getName().getString());
@@ -57,12 +57,12 @@ public class RTPBCommand {
 				ResourceLocation biomeLocation = biomeKey.location();
 				String biomeId = biomeLocation.getNamespace() + ":" + biomeLocation.getPath();
 				if(!inWhitelist(biomeId)) {
-					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), ChatType.CHAT);
+					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), ChatType.SYSTEM);
 					return 1;
 				}
 				if(Config.useOriginal()) {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
-					p.sendSystemMessage(finding, ChatType.CHAT);
+					p.sendSystemMessage(finding, ChatType.SYSTEM);
 					new Thread(() -> {
 						RandomTPAPI.randomTeleport(p, p.getLevel(), RandomTPAPI.getBiomeFromKey(biomeKey));
 					}).start();
