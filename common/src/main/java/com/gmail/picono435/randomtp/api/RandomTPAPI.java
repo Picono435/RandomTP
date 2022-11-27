@@ -19,8 +19,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import java.util.*;
 
@@ -76,14 +76,14 @@ public class RandomTPAPI {
                 }
                 if(maxTries == 0) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendSystemMessage(msg, ChatType.SYSTEM);
+                    player.sendSystemMessage(msg, false);
                     return;
                 }
             }
 
             player.teleportTo(world, x, y, z, player.getXRot(), player.getYRot());
             Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
-            player.sendSystemMessage(successful, ChatType.SYSTEM);
+            player.sendSystemMessage(successful, false);
         } catch(Exception ex) {
             RandomTP.getLogger().info("Error executing command.");
             ex.printStackTrace();
@@ -150,13 +150,13 @@ public class RandomTPAPI {
     public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
         if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
         if ((isEmpty(world, mutableBlockPos)) &&
-                (!isDangerBlock(world, mutableBlockPos))) {
+                (!isDangerBlocks(world, mutableBlockPos))) {
             return true;
         }
         return false;
     }
 
-    public static boolean isEmpty(Level world, BlockPos.MutableBlockPos mutableBlockPos) {
+    public static boolean isEmpty(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
         if ((world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY() + 1, mutableBlockPos.getZ()))) &&
                 (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() + 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() - 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) &&
                 (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() + 1))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() - 1)))) {
@@ -165,12 +165,19 @@ public class RandomTPAPI {
         return false;
     }
 
-    public static boolean isDangerBlock(Level world, BlockPos.MutableBlockPos mutableBlockPos) {
-        return getDangerBlocks().contains(world.getBlockState(mutableBlockPos).getBlock());
+    public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.move(0, 1, 0)) &&
+                isDangerBlock(world, mutableBlockPos.move(0, -1, 0))) {
+            return true;
+        }
+        if(world.getBlockState(mutableBlockPos.move(0, -1, 0)).getBlock() != Blocks.AIR) {
+            return false;
+        }
+        return true;
     }
 
-    public static List<Block> getDangerBlocks() {
-        return Arrays.asList(Blocks.LAVA, Blocks.WATER, Blocks.AIR);
+    public static boolean isDangerBlock(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
     }
 
     private static boolean isInBiomeWhitelist(ResourceLocation biome) {
