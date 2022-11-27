@@ -27,6 +27,8 @@ others:
   max-tries: -1
   # If you want to use the original RTP system or the /spreadplayers system. [default: true]
   use-original: true
+  # Do you want to check biomes at all (if set to false, the use-biome-whitelist will not be checked, provides more compatibility with mods)? [default: false]
+  check-biomes: false
   # Do you want to use the whitelist or blacklist biomes?  [default: false]
   use-biome-whitelist: false
   # The biome whitelist (Works with namespaces:paths only, use-biome-whitelist:true=whitelist use-biome-whitelist:true=blacklist)

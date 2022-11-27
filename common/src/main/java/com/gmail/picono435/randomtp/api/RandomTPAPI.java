@@ -56,7 +56,7 @@ public class RandomTPAPI {
             while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
                 y++;
                 mutableBlockPos.setY(y);
-                if(y >= 120 || !isInBiomeWhitelist(getBiomeId(getBiomeFromKey(world.getBiome(new BlockPos(x, y, z)).unwrapKey().get())))) {
+                if(y >= 120 || Config.checkBiomes() && !isInBiomeWhitelist(getBiomeId(getBiomeFromKey(world.getBiome(new BlockPos(x, y, z)).unwrapKey().get())))) {
                     x = r.nextInt(highX-lowX) + lowX;
                     y = 50;
                     z = r.nextInt(highZ-lowZ) + lowZ;
