@@ -1,6 +1,9 @@
 package com.gmail.picono435.randomtp.config;
 
 public class Messages {
+    public static String getMaxTries() {
+        return ConfigHandler.getConfig().node("command").node("max-tries").getString();
+    }
 
     public static String getFinding() {
         return ConfigHandler.getMessages().node("command").node("finding").getString();
@@ -21,9 +24,4 @@ public class Messages {
     public static String getBiomeNotAllowed() {
         return ConfigHandler.getMessages().node("command").node("biomeNotAllowed").getString();
     }
-
-    public static String getMaxTries() {
-        return ConfigHandler.getConfig().node("command").node("max-tries").getString();
-    }
-
 }

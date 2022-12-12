@@ -49,7 +49,7 @@ public class Config {
         return ConfigHandler.getConfig().node("inter-dimensions-command").node("inter-dim").getBoolean();
     }
 
-    public static boolean useWhitelist() {
+    public static boolean useDimensionWhitelist() {
         return ConfigHandler.getConfig().node("inter-dimensions-command").node("use-whitelist").getBoolean();
     }
 

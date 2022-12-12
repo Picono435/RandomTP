@@ -57,7 +57,7 @@ public class RTPBCommand {
 				ResourceLocation biomeLocation = biomeKey.location();
 				String biomeId = biomeLocation.getNamespace() + ":" + biomeLocation.getPath();
 				if(!inWhitelist(biomeId)) {
-					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), true);
+					p.sendSystemMessage(Component.literal(Messages.getBiomeNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), true);
 					return 1;
 				}
 				if(Config.useOriginal()) {
@@ -77,13 +77,13 @@ public class RTPBCommand {
 		return 1;
 	}
 	
-	  private static boolean inWhitelist(String dimension) {
+	  private static boolean inWhitelist(String biome) {
 		  //WHITELIST
-		  if(Config.useWhitelist()) {
-			  return Config.getAllowedDimensions().contains(dimension);
+		  if(Config.useBiomeWhitelist()) {
+			  return Config.getAllowedBiomes().contains(biome);
 		  //BLACKLIST
 		  } else {
-			  return !Config.getAllowedDimensions().contains(dimension);
+			  return !Config.getAllowedBiomes().contains(biome);
 		  }
 	  }
 }

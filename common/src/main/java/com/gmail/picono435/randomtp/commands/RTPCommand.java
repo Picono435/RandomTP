@@ -32,8 +32,8 @@ public class RTPCommand {
 		try {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
-				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-				p.sendSystemMessage(cooldownmes, false);
+				Component cooldownMsg = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
+				p.sendSystemMessage(cooldownMsg, false);
 				return 1;
 			} else {
 				cooldowns.remove(p.getName().getString());

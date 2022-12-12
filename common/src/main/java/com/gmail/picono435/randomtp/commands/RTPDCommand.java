@@ -42,8 +42,8 @@ public class RTPDCommand {
 		try {
 			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
 				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
-				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
-				p.sendSystemMessage(cooldownmes, false);
+				Component cooldownMsg = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
+				p.sendSystemMessage(cooldownMsg, false);
 				return 1;
 			} else {
 				cooldowns.remove(p.getName().getString());
@@ -87,7 +87,7 @@ public class RTPDCommand {
 	
 	  private static boolean inWhitelist(String dimension) {
 		  //WHITELIST
-		  if(Config.useWhitelist()) {
+		  if(Config.useDimensionWhitelist()) {
 			  return Config.getAllowedDimensions().contains(dimension);
 		  //BLACKLIST
 		  } else {

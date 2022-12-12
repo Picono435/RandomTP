@@ -142,6 +142,22 @@ public class RandomTPAPI {
         throw new AssertionError();
     }
 
+    private static boolean isInBiomeWhitelist(ResourceLocation biome) {
+        //WHITELIST
+        if(Config.useBiomeWhitelist()) {
+            if(biome == null) {
+                return false;
+            }
+            return Config.getAllowedBiomes().contains(biome.toString());
+        //BLACKLIST
+        } else {
+            if(biome == null) {
+                return true;
+            }
+            return !Config.getAllowedBiomes().contains(biome.toString());
+        }
+    }
+
     @ExpectPlatform
     public static boolean hasPermission(CommandSourceStack source, String permission) {
         throw new AssertionError();
@@ -150,7 +166,7 @@ public class RandomTPAPI {
     public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
         if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
         if ((isEmpty(world, mutableBlockPos)) &&
-                (!isDangerBlocks(world, mutableBlockPos))) {
+                (!isDangerPos(world, mutableBlockPos))) {
             return true;
         }
         return false;
@@ -165,7 +181,7 @@ public class RandomTPAPI {
         return false;
     }
 
-    public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+    public static boolean isDangerPos(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
         if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.move(0, 1, 0)) &&
                 isDangerBlock(world, mutableBlockPos.move(0, -1, 0))) {
             return true;
@@ -178,22 +194,6 @@ public class RandomTPAPI {
 
     public static boolean isDangerBlock(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
         return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
-    }
-
-    private static boolean isInBiomeWhitelist(ResourceLocation biome) {
-        //WHITELIST
-        if(Config.useBiomeWhitelist()) {
-            if(biome == null) {
-                return false;
-            }
-            return Config.getAllowedBiomes().contains(biome.toString());
-            //BLACKLIST
-        } else {
-            if(biome == null) {
-                return true;
-            }
-            return !Config.getAllowedBiomes().contains(biome.toString());
-        }
     }
 
     static record ResourceResult<T>(ResourceKey<T> key) implements ResourceOrTagLocationArgument.Result<T> {
