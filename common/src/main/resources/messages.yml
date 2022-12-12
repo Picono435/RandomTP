@@ -1,16 +1,27 @@
+# All messages accept color codes using "& + (letter)".
+# For example, "&c" makes all following text red.
 command:
-  # Message that you want to appear when the max tries of finding a safe location is reached [ placeholders: {playerName}, color codes: & + letter (example: &c) ].
-  max-tries: '&cTimed out trying to find a safe location to warp to.'
-  # Message that you want to appear when the mod is finding a safe location [ placeholders: {playerName} {blockZ} {blockY}, color codes: & + letter (example: &c) ] [default: &aFinding a safe random teleport location...]
-  finding: >-
-    &aFinding a safe random teleport location...
-  # Message that you want to appear when the command is successfully made. [ placeholders: {playerName} {blockZ} {blockY}, color codes: & + letter (example: &c) ] [default: &aSuccessfully teleported you to a random location.]
-  successfully: >-
-    &aYou have been teleported to the coordinates &e{blockX}, {blockY},
-    {blockZ}&a.
-  # Message that you want to appear when the command is on cooldown. [ placeholders: {playerName}, color codes: & + letter (example: &c) ] [default: &cWait more {secondsLeft} seconds for execute the command again.]
-  cooldown: '&cWait more {secondsLeft} seconds for execute the command again.'
-  # Message that you want to appear when you execute /rtpd with a dimension that is in the blacklist [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ]. [default: &cYou cannot random teleport to that dimension!]
-  dimensionNotAllowed: '&cYou cannot random teleport to that dimension!'
-  # Message that you want to appear when you execute /rtpd with a dimension that is in the blacklist [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ]. [default: &cYou cannot random teleport to that dimension!]
-  biomeNotAllowed: '&cYou cannot random teleport to that biome!'
+  # Message that appears when the max tries of finding a safe destination is reached.
+  # (placeholders: {playerName})
+  # [default: '&cTimed out trying to find a safe location to teleport to.']
+  max-tries: '&cTimed out trying to find a safe location to teleport to.'
+  # Message that appears while the mod is finding a safe location.
+  # (placeholders: {playerName} {blockX} {blockY} {blockZ})
+  # [default: '&aFinding a safe random teleport location...']
+  finding: '&aFinding a safe teleport location...'
+  # Message that appears when the teleport is successful.
+  # (placeholders: {playerName} {blockX} {blockY} {blockZ})
+  # [default: '&aSuccessfully teleported you to a random location.']
+  successfully: '&aSuccessfully teleported you to a random location.'
+  # Message that appears when the command is on cooldown.
+  # (placeholders: {playerName} ${secondsLeft})
+  # [default: '&cWait {secondsLeft} more seconds to execute that command again.']
+  cooldown: '&cWait {secondsLeft} more seconds to execute that command again.'
+  # Message that appears when a player tries to teleport to a blacklisted dimension.
+  # (placeholders: {playerName} {dimensionId},)
+  # [default: '&cYou cannot random teleport to that dimension!']
+  dimensionNotAllowed: '&cYou cannot teleport to that dimension!'
+  # Message that appears when a player tries to teleport to a biome that blacklisted.
+  # (placeholders: {playerName} {biomeId})
+  # [default: '&cYou cannot random teleport to that biome!']
+  biomeNotAllowed: '&cYou cannot teleport to that biome!'
