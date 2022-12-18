@@ -28,6 +28,10 @@ public class Config {
         return ConfigHandler.getConfig().node("others").node("use-original").getBoolean();
     }
 
+    public static boolean checkBiomes() {
+        return ConfigHandler.getConfig().node("others").node("check-biomes").getBoolean();
+    }
+
     public static boolean useBiomeWhitelist() {
         return ConfigHandler.getConfig().node("others").node("use-biome-whitelist").getBoolean();
     }
