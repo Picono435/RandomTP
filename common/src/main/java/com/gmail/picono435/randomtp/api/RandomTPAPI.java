@@ -111,12 +111,10 @@ public class RandomTPAPI {
             if(highX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
                 highX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2));
             }
-            System.out.println("HIGHX " + highX);
             int lowX = Config.getMinDistance() + Math.abs(player.getBlockX());
             if(lowX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
                 lowX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2)) - 10;
             }
-            System.out.println("LOWX " + lowX);
             return new Pair<>(lowX, highX);
         } else {
             // Calculating bounds for coordinate Z
