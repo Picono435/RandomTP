@@ -63,6 +63,7 @@ public class RandomTPAPI {
             int y = mutableBlockPos.getY();
             while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
                 y++;
+                mutableBlockPos.setY(y);
                 if(mutableBlockPos.getY() >= 150 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
                     if(biomeResourceKey != null) {
                         Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
