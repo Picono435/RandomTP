@@ -1,39 +1,71 @@
 distance:
-  # The default world that you are teleported when doing /rtp (Only supported when use-original is set to true) [playerworld: the world on where the player is, default: playerworld]
+  # The default world you are teleported to when using /rtp.
+  # Only supported when use-original is set to true
+  # When set to "playerworld" will teleport to the player's world
+  # Default: playerworld
   default_world: playerworld
-  # Max distance that you want to a person be teleported. (0 = world border size / 2) [default: auto]
+  # Maximum distance you want you to be teleported centered in level spawn.
+  # 0 = world border size
+  # Default: auto
   # Range: > 0
-  max_distance: 10000
-  # Minimum distance that you want to a person be teleported. [default: 1]
-  # Range: > 1
+  max_distance: 0
+  # Minimum distance you want you to be teleported.
+  # Default: 1
+  # Range: > 0
   min_distance: 1
 
 inter-dimensions-command:
-  # Do you want to the command /rtpd be allowed? (This commands adds a inter-dimension RTP) [default: true]
+  # Do you want to enable the /rtpd command?
+  # This commands allows you to teleport to a random location in a specified dimension.
+  # Default: true
   inter-dim: true
-  # Do you want to use the whitelist or blacklist dimension?  [default: false]
+  # Do you want to whitelist or blacklist destination dimensions?
+  # Default: false
   use-whitelist: false
-  # The dimensions whitelist (Works with namespaces:paths only, use-whitelist:true=whitelist use-whitelist:true=blacklist)
+  # The dimension whitelist / blacklist.
+  # Supported format is namespace:path
+  # Default: minecraft:the_end (The End - vanilla) and twilight:dimension (The Twilight Forest - mod]
   whitelist-dimension:
     - 'minecraft:the_end'
     - 'twilight:dimension'
 
 inter-biomes-command:
-  # Do you want to the command /rtpb be allowed? (This commands adds a inter-biome RTP) [default: true]
+  # Do you want to enable the /rtpb command?
+  # This commands allows you to teleport to a random location in a specified biome.
+  # Default: true
   inter-biome: true
 
 others:
-  # The amount of tries to find a safe location (original system) [-1: infinite, default: -1]
+  # How many times should the mod look for a safe teleport destination?
+  # Only supported when use-original is set to true
+  # -1 = infinite
+  # Default: -1
   max-tries: -1
-  # If you want to use the original RTP system or the /spreadplayers system. [default: true]
+  # What RTP system should the mod use?
+  # true = the mod's custom RTP system
+  # false = the vanilla /spreadplayers system
+  # [default: true]
   use-original: true
-  # Do you want to use the whitelist or blacklist biomes?  [default: false]
+  # Do you want to whitelist or blacklist destination biomes?
+  # true = whitelist
+  # false = blacklist
+  # [default: false]
   use-biome-whitelist: false
-  # The biome whitelist (Works with namespaces:paths only, use-biome-whitelist:true=whitelist use-biome-whitelist:true=blacklist)
+  # The biome whitelist / blacklist.
+  # (uses namespace:path format)
+  # [default: all vanilla oceans]
   biome-whitelist:
+    - 'minecraft:warm_ocean'
+    - 'minecraft:lukewarm_ocean'
+    - 'minecraft:deep_lukewarm_ocean'
     - 'minecraft:ocean'
     - 'minecraft:deep_ocean'
+    - 'minecraft:cold_ocean'
+    - 'minecraft:deep_cold_ocean'
+    - 'minecraft:frozen_ocean'
+    - 'minecraft:deep_frozen_ocean'
 
-  # How much cooldown do you want for the command [range: 0 ~ 1000, default: 0]
-  # Range: > 0
+  # How long do you want the command cooldown to be?
+  # (range: 0 ~ 1000)
+  # [default: 0]
   cooldown: 0

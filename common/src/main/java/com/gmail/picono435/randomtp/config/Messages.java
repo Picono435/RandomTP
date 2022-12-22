@@ -15,15 +15,15 @@ public class Messages {
     }
 
     public static String getDimensionNotAllowed() {
-        return ConfigHandler.getMessages().node("command").node("dimensionNotAllowed").getString();
+        return ConfigHandler.getMessages().node("command").node("dimension-not-allowed").getString();
     }
 
     public static String getBiomeNotAllowed() {
-        return ConfigHandler.getMessages().node("command").node("biomeNotAllowed").getString();
+        return ConfigHandler.getMessages().node("command").node("biome-not-allowed").getString();
     }
 
     public static String getMaxTries() {
-        return ConfigHandler.getConfig().node("command").node("max-tries").getString();
+        return ConfigHandler.getMessages().node("command").node("max-tries").getString();
     }
 
 }

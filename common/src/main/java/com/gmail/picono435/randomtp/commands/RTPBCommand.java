@@ -8,6 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,14 +48,14 @@ public class RTPBCommand {
 				cooldowns.remove(p.getName().getString());
 				String biomeId = biomeLocation.getNamespace() + ":" + biomeLocation.getPath();
 				if(!inWhitelist(biomeId)) {
-					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), p.getUUID());
+					p.sendMessage(new TextComponent(Messages.getBiomeNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), p.getUUID());
 					return 1;
 				}
 				if(Config.useOriginal()) {
 					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendMessage(finding, p.getUUID());
 					new Thread(() -> {
-						RandomTPAPI.randomTeleport(p, p.getLevel(), RandomTPAPI.getBiomeFromKey(p.getServer(), biomeLocation));
+						RandomTPAPI.randomTeleport(p, p.getLevel(), p.getServer().registryAccess().registry(Registry.BIOME_REGISTRY).get().getResourceKey(p.getServer().registryAccess().registry(Registry.BIOME_REGISTRY).get().get(biomeLocation)).get());
 					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
