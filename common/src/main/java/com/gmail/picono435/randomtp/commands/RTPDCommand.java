@@ -49,7 +49,7 @@ public class RTPDCommand {
 				cooldowns.remove(p.getName().getString());
 				String dimensionId = dim.dimension().location().getNamespace() + ":" + dim.dimension().location().getPath();
 				if(!inWhitelist(dimensionId)) {
-					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), true);
+					p.sendSystemMessage(Component.literal(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{dimensionId\\}", dimensionId.toString()).replace('&', '§')), false);
 					return 1;
 				}
 				if(Config.useOriginal()) {

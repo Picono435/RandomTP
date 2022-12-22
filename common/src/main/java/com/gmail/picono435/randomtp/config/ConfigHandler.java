@@ -17,11 +17,11 @@ import java.nio.file.Path;
 public class ConfigHandler {
 
     private static ConfigurationNode config;
+    private static YamlConfigurationLoader configLoader;
     private static ConfigurationNode messages;
+    private static YamlConfigurationLoader messagesLoader;
 
     public static void loadConfiguration() throws IOException, URISyntaxException {
-        migrateFiles();
-
         URL input = ConfigHandler.class.getClassLoader().getResource("config.yml");
         File to = getConfigDirectory().resolve("RandomTP").resolve("config.yml").toFile();
         if(!to.exists()){
@@ -33,23 +33,31 @@ public class ConfigHandler {
             FileUtils.copyURLToFile(input2, to2);
         }
 
-        config = YamlConfigurationLoader.builder()
+        configLoader = YamlConfigurationLoader.builder()
                 .indent(2)
                 .url(input)
                 .path(getConfigDirectory().resolve("RandomTP").resolve("config.yml"))
-                .build().load();
+                .build();
+        config = configLoader.load();
 
-        messages = YamlConfigurationLoader.builder()
+        messagesLoader = YamlConfigurationLoader.builder()
                 .indent(2)
                 .url(input2)
                 .path(getConfigDirectory().resolve("RandomTP").resolve("messages.yml"))
-                .build().load();
-    }
+                .build();
+        messages = messagesLoader.load();
 
-    public static void migrateFiles() {
-        File configToml = getConfigDirectory().resolve("RandomTP").resolve("config.toml").toFile();
-        if(configToml.exists()) {
-            RandomTP.getLogger().error("You are using an old configuration format, because of the recent transformation of the mod this format is no longer supported. Be free to convert using an online website (https://www.convertsimple.com/convert-toml-to-yaml/). This will probably be automated in a future update.");
+        if(!messages.node("command", "dimensionNotAllowed").isNull()) {
+            messages.node("command", "dimension-not-allowed").mergeFrom(messages.node("command", "dimensionNotAllowed"));
+            messages.node("command", "dimensionNotAllowed").set(null);
+            messagesLoader.save(messages);
+            RandomTP.getLogger().warn("Migrated config key from dimensionNotAllowed to dimension-not-allowed");
+        }
+        if(!messages.node("command", "biomeNotAllowed").isNull()) {
+            messages.node("command", "biome-not-allowed").mergeFrom(messages.node("command", "biomeNotAllowed"));
+            messages.node("command", "biomeNotAllowed").set(null);
+            messagesLoader.save(messages);
+            RandomTP.getLogger().warn("Migrated config key from biomeNotAllowed to biome-not-allowed");
         }
     }
 

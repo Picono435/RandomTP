@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "id": "randomtp",
   "version": "${version}",
-  "name": "Random Teleport Mod",
-  "description": "description='''\nA mod that teleports you to a random location without colliding with lava, water or the world border.",
+  "name": "RandomTP",
+  "description": "description='''\nA mod that allows you to teleport you to a random location without colliding with lava, water or the world border.",
   "authors": [
     "Picono435"
   ],
   "contact": {
-    "homepage": "https://www.piconodev.pt/",
+    "homepage": "https://www.piconodev.com/",
     "sources": "https://github.com/Picono435/RandomTP"
   },
   "license": "GNU GENERAL PUBLIC LICENSE v3",

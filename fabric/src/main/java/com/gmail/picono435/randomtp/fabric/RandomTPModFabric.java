@@ -11,8 +11,11 @@ import com.gmail.picono435.randomtp.config.ConfigHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
 
 public class RandomTPModFabric implements ModInitializer {
+
+    public static MinecraftServer minecraftServer;
 
     @Override
     public void onInitialize() {
@@ -37,6 +40,8 @@ public class RandomTPModFabric implements ModInitializer {
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.interbiome", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.cooldown.exempt", 1);
 
+            minecraftServer = server;
+
             RandomTP.getLogger().info("RandomTP successfully loaded.");
         });
 
@@ -46,7 +51,7 @@ public class RandomTPModFabric implements ModInitializer {
                 RTPDCommand.register(dispatcher);
             }
             if(Config.useBiome()) {
-                RTPBCommand.register(dispatcher);
+                RTPBCommand.register(dispatcher, registryAccess);
             }
         });
     }

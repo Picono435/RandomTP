@@ -11,6 +11,6 @@ command:
   # Message that you want to appear when the command is on cooldown. [ placeholders: {playerName}, color codes: & + letter (example: &c) ] [default: &cWait more {secondsLeft} seconds for execute the command again.]
   cooldown: '&cWait more {secondsLeft} seconds for execute the command again.'
   # Message that you want to appear when you execute /rtpd with a dimension that is in the blacklist [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ]. [default: &cYou cannot random teleport to that dimension!]
-  dimensionNotAllowed: '&cYou cannot random teleport to that dimension!'
+  dimension-not-allowed: '&cYou cannot random teleport to that dimension!'
   # Message that you want to appear when you execute /rtpd with a dimension that is in the blacklist [ placeholders: {playerName} {dimensionId}, color codes: & + letter (example: &c) ]. [default: &cYou cannot random teleport to that dimension!]
-  biomeNotAllowed: '&cYou cannot random teleport to that biome!'
+  biome-not-allowed: '&cYou cannot random teleport to that biome!'
