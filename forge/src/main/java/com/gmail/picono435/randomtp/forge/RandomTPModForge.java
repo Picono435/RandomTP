@@ -77,7 +77,7 @@ public class RandomTPModForge {
             RTPDCommand.register(event.getDispatcher());
         }
         if(Config.useBiome()) {
-            RTPBCommand.register(event.getDispatcher());
+            RTPBCommand.register(event.getDispatcher(), event.getBuildContext());
         }
     }
 

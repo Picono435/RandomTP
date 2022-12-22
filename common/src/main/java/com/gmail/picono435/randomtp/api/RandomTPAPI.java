@@ -60,8 +60,9 @@ public class RandomTPAPI {
                 mutableBlockPos.setZ(pair.getFirst().getZ());
             }
             int maxTries = Config.getMaxTries();
+            int y = mutableBlockPos.getY();
             while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
-                mutableBlockPos.move(Direction.UP);
+                y++;
                 if(mutableBlockPos.getY() >= 150 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
                     if(biomeResourceKey != null) {
                         Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
@@ -71,7 +72,7 @@ public class RandomTPAPI {
                             return;
                         }
                         mutableBlockPos.setX(pair.getFirst().getX());
-                        mutableBlockPos.setY(pair.getFirst().getY());
+                        mutableBlockPos.setY(50);
                         mutableBlockPos.setZ(pair.getFirst().getZ());
                     }
                     int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
@@ -80,6 +81,7 @@ public class RandomTPAPI {
                     if(random.nextInt(2) == 1) z = z * -1;
 
                     mutableBlockPos.setX(x);
+                    y = 50;
                     mutableBlockPos.setY(50);
                     mutableBlockPos.setZ(z);
                     continue;
