@@ -35,7 +35,7 @@ This mod is available for Fabric and Forge in these versions:
 - [1.19](https://github.com/Picono435/RandomTP/tree/1.19)
 - [1.18](https://github.com/Picono435/RandomTP/tree/1.18.2)
 - [1.17](https://github.com/Picono435/RandomTP/tree/1.17.1) [End Of Life]
-- [1.16](https://github.com/Picono435/RandomTP/tree/1.16.5)
+- [1.16](https://github.com/Picono435/RandomTP/tree/1.16.5) [End Of Life]
 - [1.14 & 1.15](https://github.com/Picono435/RandomTP/tree/1.15.2) [End Of Life]
 - [1.12](https://github.com/Picono435/RandomTP/tree/1.12.2) [End Of Life]
 
