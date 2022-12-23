@@ -183,35 +183,31 @@ public class RandomTPAPI {
     }
 
     public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
-        if ((isEmpty(world, mutableBlockPos)) &&
-                (!isDangerBlocks(world, mutableBlockPos))) {
+        if (isEmpty(world, mutableBlockPos) && !isDangerBlocks(world, mutableBlockPos)) {
             return true;
         }
         return false;
     }
 
     public static boolean isEmpty(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if ((world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY() + 1, mutableBlockPos.getZ()))) &&
-                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() + 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() - 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) &&
-                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() + 1))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() - 1)))) {
+        if (world.isEmptyBlock(mutableBlockPos.offset(0, 1, 0)) && world.isEmptyBlock(mutableBlockPos)) {
             return true;
         }
         return false;
     }
 
     public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.move(0, 1, 0)) &&
-                isDangerBlock(world, mutableBlockPos.move(0, -1, 0))) {
+        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.offset(0, 1, 0)) &&
+                isDangerBlock(world, mutableBlockPos.offset(0, -1, 0))) {
             return true;
         }
-        if(world.getBlockState(mutableBlockPos.move(0, -1, 0)).getBlock() != Blocks.AIR) {
+        if(world.getBlockState(mutableBlockPos.offset(0, -1, 0)).getBlock() != Blocks.AIR) {
             return false;
         }
         return true;
     }
 
-    public static boolean isDangerBlock(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+    public static boolean isDangerBlock(ServerLevel world, BlockPos mutableBlockPos) {
         return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
     }
 
