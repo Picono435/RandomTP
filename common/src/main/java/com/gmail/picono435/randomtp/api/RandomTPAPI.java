@@ -4,12 +4,14 @@ import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ResourceOrTagLocationArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,10 +19,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 
 import java.util.Map;
 import java.util.Optional;
@@ -32,41 +36,62 @@ public class RandomTPAPI {
         randomTeleport(player, world, null);
     }
 
-    public static void randomTeleport(ServerPlayer player, ServerLevel world, Biome biome) {
+    public static void randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
         try  {
-            Random r = new Random();
-            int lowX = ((int)Math.round(Math.abs(player.getX())) + Config.getMinDistance()) * -1;
-            int highX = Math.abs((int)Math.round(player.getX()) + Config.getMaxDistance());
-            int lowZ = ((int)Math.round(Math.abs(player.getZ())) + Config.getMinDistance()) * -1;
-            int highZ = Math.abs((int)Math.round(player.getZ()) + Config.getMaxDistance());
-            if(Config.getMaxDistance() == 0) {
-                highX = (int) (world.getWorldBorder().getSize() / 2);
-                highZ = (int) (world.getWorldBorder().getSize() / 2);
-            }
-            int x = r.nextInt(highX-lowX) + lowX;
-            int y = 50;
-            int z = r.nextInt(highZ-lowZ) + lowZ;
-            if(biome != null) {
-                ResourceOrTagLocationArgument.Result<Biome> result = new ResourceResult<>(getBiomeResourceKey(biome));
-                BlockPos biomePos = world.findNearestBiome(result, new BlockPos(x, y, z), 6400, 8).getFirst();
-                x = biomePos.getX();
-                y = biomePos.getY();
-                z = biomePos.getZ();
+            Random random = new Random();
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            Pair<Integer, Integer> boundsX = null;
+            Pair<Integer, Integer> boundsZ = null;
+            if(biomeResourceKey == null) {
+                boundsX = generateBounds(world, player, true);
+                boundsZ = generateBounds(world, player, false);
+
+                int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
+                if(random.nextInt(2) == 1) x = x * -1;
+                int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
+                if(random.nextInt(2) == 1) z = z * -1;
+
+                mutableBlockPos.setX(x);
+                mutableBlockPos.setY(50);
+                mutableBlockPos.setZ(z);
+            } else {
+                Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 8);
+                if(pair == null) {
+                    TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                    player.sendMessage(msg, player.getUUID());
+                    return;
+                }
+                mutableBlockPos.setX(pair.getFirst().getX());
+                mutableBlockPos.setY(50);
+                mutableBlockPos.setZ(pair.getFirst().getZ());
             }
             int maxTries = Config.getMaxTries();
-            while (!isSafe(world, x, y, z) && (maxTries == -1 || maxTries > 0)) {
+            int y = mutableBlockPos.getY();
+            while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
                 y++;
-                if(y >= 120 || !isInBiomeWhitelist(getBiomeId(getBiomeFromKey(world.getBiome(new BlockPos(x, y, z)).unwrapKey().get())).toString())) {
-                    x = r.nextInt(highX-lowX) + lowX;
-                    y = 50;
-                    z = r.nextInt(highZ-lowZ) + lowZ;
-                    if(biome != null) {
-                        ResourceOrTagLocationArgument.Result<Biome> result = new ResourceResult<>(getBiomeResourceKey(biome));
-                        BlockPos biomePos = world.findNearestBiome(result, new BlockPos(x, y, z), 6400, 8).getFirst();
-                        x = biomePos.getX();
-                        y = biomePos.getY();
-                        z = biomePos.getZ();
+                mutableBlockPos.setY(y);
+                if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
+                    if(biomeResourceKey != null) {
+                        Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 8);
+                        if(pair == null) {
+                            TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                            player.sendMessage(msg, player.getUUID());
+                            return;
+                        }
+                        mutableBlockPos.setX(pair.getFirst().getX());
+                        mutableBlockPos.setY(50);
+                        mutableBlockPos.setZ(pair.getFirst().getZ());
+                        continue;
                     }
+                    int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
+                    if(random.nextInt(2) == 1) x = x * -1;
+                    int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
+                    if(random.nextInt(2) == 1) z = z * -1;
+
+                    mutableBlockPos.setX(x);
+                    y = 50;
+                    mutableBlockPos.setY(50);
+                    mutableBlockPos.setZ(z);
                     continue;
                 }
                 if(maxTries > 0){
@@ -79,12 +104,39 @@ public class RandomTPAPI {
                 }
             }
 
-            player.teleportTo(world, x, y, z, player.getXRot(), player.getYRot());
+            player.teleportTo(world, mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ(), player.getXRot(), player.getYRot());
             TextComponent successful = new TextComponent(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
             player.sendMessage(successful, player.getUUID());
         } catch(Exception ex) {
             RandomTP.getLogger().info("Error executing command.");
             ex.printStackTrace();
+        }
+    }
+
+    private static Pair<Integer, Integer> generateBounds(ServerLevel world, Player player, boolean XorZ) {
+        int maxDistance = (int) Math.round(Config.getMaxDistance() == 0 ? (world.getWorldBorder().getSize() / 2) : Config.getMaxDistance());
+        if(XorZ) {
+            // Calculating bounds for coordinates X
+            int highX = maxDistance + Math.abs(player.getBlockX());
+            if(highX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
+                highX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2));
+            }
+            int lowX = Config.getMinDistance() + Math.abs(player.getBlockX());
+            if(lowX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
+                lowX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2)) - 10;
+            }
+            return new Pair<>(lowX, highX);
+        } else {
+            // Calculating bounds for coordinate Z
+            int highZ = maxDistance + Math.abs(player.getBlockZ());
+            if(highZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
+                highZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2));
+            }
+            int lowZ = Config.getMinDistance() + Math.abs(player.getBlockZ());
+            if(lowZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
+                lowZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2)) - 10;
+            }
+            return new Pair<>(lowZ, highZ);
         }
     }
 
@@ -126,85 +178,56 @@ public class RandomTPAPI {
     }
 
     @ExpectPlatform
-    public static ResourceLocation getBiomeId(Biome biome) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static ResourceKey<Biome> getBiomeResourceKey(Biome biome) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static Biome getBiomeFromKey(ResourceKey<Biome> biome) {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static boolean hasPermission(CommandSourceStack source, String permission) {
         throw new AssertionError();
     }
 
-    public static boolean isSafe(ServerLevel world, int newX, int newY, int newZ) {
-        if(newX >= world.getWorldBorder().getMaxX() || newZ >= world.getWorldBorder().getMaxZ()) return false;
-        if ((isEmpty(world, newX, newY, newZ)) &&
-                (!isDangerBlock(world, newX, newY - 1, newZ))) {
+    public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
+        if ((isEmpty(world, mutableBlockPos)) &&
+                (!isDangerBlocks(world, mutableBlockPos))) {
             return true;
         }
         return false;
     }
 
-    public static boolean isEmpty(Level world, int newX, int newY, int newZ) {
-        if ((world.isEmptyBlock(new BlockPos(newX, newY, newZ))) && (world.isEmptyBlock(new BlockPos(newX, newY + 1, newZ))) &&
-                (world.isEmptyBlock(new BlockPos(newX + 1, newY, newZ))) && (world.isEmptyBlock(new BlockPos(newX - 1, newY, newZ))) &&
-                (world.isEmptyBlock(new BlockPos(newX, newY, newZ + 1))) && (world.isEmptyBlock(new BlockPos(newX, newY, newZ - 1)))) {
+    public static boolean isEmpty(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if ((world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY() + 1, mutableBlockPos.getZ()))) &&
+                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() + 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() - 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) &&
+                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() + 1))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() - 1)))) {
             return true;
         }
         return false;
     }
 
-    public static boolean isDangerBlock(Level world, int newX, int newY, int newZ) {
-        for (Block block : getDangerBlocks()) {
-            if (block.equals(world.getBlockState(new BlockPos(newX, newY, newZ)).getBlock())) {
-                return true;
-            }
+    public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.move(0, 1, 0)) &&
+                isDangerBlock(world, mutableBlockPos.move(0, -1, 0))) {
+            return true;
         }
-        return false;
+        if(world.getBlockState(mutableBlockPos.move(0, -1, 0)).getBlock() != Blocks.AIR) {
+            return false;
+        }
+        return true;
     }
 
-    public static Block[] getDangerBlocks() {
-        return new Block[] {Blocks.LAVA, Blocks.WATER, Blocks.AIR};
+    public static boolean isDangerBlock(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
     }
 
-    private static boolean isInBiomeWhitelist(String biome) {
+    private static boolean isInBiomeWhitelist(ResourceLocation biome) {
         //WHITELIST
         if(Config.useBiomeWhitelist()) {
-            return Config.getAllowedBiomes().contains(biome);
+            if(biome == null) {
+                return false;
+            }
+            return Config.getAllowedBiomes().contains(biome.toString());
             //BLACKLIST
         } else {
-            return !Config.getAllowedBiomes().contains(biome);
-        }
-    }
-
-    static record ResourceResult<T>(ResourceKey<T> key) implements ResourceOrTagLocationArgument.Result<T> {
-        ResourceResult(ResourceKey<T> key) {
-            this.key = key;
-        }
-
-        public Either<ResourceKey<T>, TagKey<T>> unwrap() {
-            return Either.left(this.key);
-        }
-
-        public <E> Optional<ResourceOrTagLocationArgument.Result<E>> cast(ResourceKey<? extends Registry<E>> resourceKey) {
-            return this.key.cast(resourceKey).map(ResourceResult::new);
-        }
-
-        public boolean test(Holder<T> holder) {
-            return holder.is(this.key);
-        }
-
-        public String asPrintable() {
-            return this.key.location().toString();
+            if(biome == null) {
+                return true;
+            }
+            return !Config.getAllowedBiomes().contains(biome.toString());
         }
     }
 }

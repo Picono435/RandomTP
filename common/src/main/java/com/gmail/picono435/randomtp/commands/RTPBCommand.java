@@ -52,14 +52,14 @@ public class RTPBCommand {
 				ResourceLocation biomeLocation = biomeKey.location();
 				String biomeId = biomeLocation.getNamespace() + ":" + biomeLocation.getPath();
 				if(!inWhitelist(biomeId)) {
-					p.sendMessage(new TextComponent(Messages.getDimensionNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), p.getUUID());
+					p.sendMessage(new TextComponent(Messages.getBiomeNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeId.toString()).replace('&', '§')), p.getUUID());
 					return 1;
 				}
 				if(Config.useOriginal()) {
 					TextComponent finding = new TextComponent(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendMessage(finding, p.getUUID());
 					new Thread(() -> {
-						RandomTPAPI.randomTeleport(p, p.getLevel(), RandomTPAPI.getBiomeFromKey(biomeKey));
+						RandomTPAPI.randomTeleport(p, p.getLevel(), biomeKey);
 					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
