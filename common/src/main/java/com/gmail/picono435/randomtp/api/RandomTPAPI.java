@@ -51,6 +51,7 @@ public class RandomTPAPI {
             } else {
                 Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
                 if(pair == null) {
+                    System.out.println("Could not find biome sadje :(");
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendSystemMessage(msg, false);
                     return;
@@ -58,16 +59,19 @@ public class RandomTPAPI {
                 mutableBlockPos.setX(pair.getFirst().getX());
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(pair.getFirst().getZ());
+                System.out.println("FOOOOOOOUND biome trying positions");
             }
             int maxTries = Config.getMaxTries();
             int y = mutableBlockPos.getY();
             while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
+                System.out.println(mutableBlockPos.getX() + " " + mutableBlockPos.getY() + " " + mutableBlockPos.getZ());
                 y++;
                 mutableBlockPos.setY(y);
                 if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
                     if(biomeResourceKey != null) {
                         Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
                         if(pair == null) {
+                            System.out.println("Could not find biome sadje :(");
                             Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendSystemMessage(msg, false);
                             return;
@@ -177,35 +181,31 @@ public class RandomTPAPI {
     }
 
     public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if(mutableBlockPos.getX() >= world.getWorldBorder().getMaxX() || mutableBlockPos.getZ() >= world.getWorldBorder().getMaxZ()) return false;
-        if ((isEmpty(world, mutableBlockPos)) &&
-                (!isDangerBlocks(world, mutableBlockPos))) {
+        if (isEmpty(world, mutableBlockPos) && !isDangerBlocks(world, mutableBlockPos)) {
             return true;
         }
         return false;
     }
 
     public static boolean isEmpty(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if ((world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY() + 1, mutableBlockPos.getZ()))) &&
-                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() + 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX() - 1, mutableBlockPos.getY(), mutableBlockPos.getZ()))) &&
-                (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() + 1))) && (world.isEmptyBlock(new BlockPos(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ() - 1)))) {
+        if (world.isEmptyBlock(mutableBlockPos.offset(0, 1, 0)) && world.isEmptyBlock(mutableBlockPos)) {
             return true;
         }
         return false;
     }
 
     public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.move(0, 1, 0)) &&
-                isDangerBlock(world, mutableBlockPos.move(0, -1, 0))) {
+        if(isDangerBlock(world, mutableBlockPos) && isDangerBlock(world, mutableBlockPos.offset(0, 1, 0)) &&
+                isDangerBlock(world, mutableBlockPos.offset(0, -1, 0))) {
             return true;
         }
-        if(world.getBlockState(mutableBlockPos.move(0, -1, 0)).getBlock() != Blocks.AIR) {
+        if(world.getBlockState(mutableBlockPos.offset(0, -1, 0)).getBlock() != Blocks.AIR) {
             return false;
         }
         return true;
     }
 
-    public static boolean isDangerBlock(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
+    public static boolean isDangerBlock(ServerLevel world, BlockPos mutableBlockPos) {
         return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
     }
 
