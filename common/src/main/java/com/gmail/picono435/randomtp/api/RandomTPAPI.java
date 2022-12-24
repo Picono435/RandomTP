@@ -55,7 +55,7 @@ public class RandomTPAPI {
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(z);
             } else {
-                Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 8);
+                Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 8);
                 if(pair == null) {
                     TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendMessage(msg, player.getUUID());
@@ -72,7 +72,7 @@ public class RandomTPAPI {
                 mutableBlockPos.setY(y);
                 if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
                     if(biomeResourceKey != null) {
-                        Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 8);
+                        Pair<BlockPos, Holder<Biome>> pair = world.findNearestBiome(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 8);
                         if(pair == null) {
                             TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendMessage(msg, player.getUUID());
