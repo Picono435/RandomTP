@@ -49,9 +49,8 @@ public class RandomTPAPI {
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(z);
             } else {
-                Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
+                Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
                 if(pair == null) {
-                    System.out.println("Could not find biome sadje :(");
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendSystemMessage(msg, false);
                     return;
@@ -59,19 +58,16 @@ public class RandomTPAPI {
                 mutableBlockPos.setX(pair.getFirst().getX());
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(pair.getFirst().getZ());
-                System.out.println("FOOOOOOOUND biome trying positions");
             }
             int maxTries = Config.getMaxTries();
             int y = mutableBlockPos.getY();
             while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
-                System.out.println(mutableBlockPos.getX() + " " + mutableBlockPos.getY() + " " + mutableBlockPos.getZ());
                 y++;
                 mutableBlockPos.setY(y);
                 if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
                     if(biomeResourceKey != null) {
-                        Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), mutableBlockPos.immutable(), 6400, 32, 64);
+                        Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
                         if(pair == null) {
-                            System.out.println("Could not find biome sadje :(");
                             Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendSystemMessage(msg, false);
                             return;
