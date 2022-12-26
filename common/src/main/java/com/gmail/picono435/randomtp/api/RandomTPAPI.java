@@ -130,7 +130,6 @@ public class RandomTPAPI {
             double minWorldBorderX = world.getWorldBorder().getMinX();
             int maxDistanceX = (int) (Config.getMaxDistance() == 0 ? Math.abs(maxWorldBorderX) + 2 : player.getX() >= 0 ? Config.getMaxDistance() + Math.round(player.getX()) : Config.getMaxDistance() - Math.round(player.getX()));
             int minDistanceX = (int) (player.getX() >= 0 ? Config.getMinDistance() + player.getX() : Config.getMinDistance() - player.getX());
-            System.out.println(maxDistanceX + " MXDISTANCE X");
             int highX;
             if(Math.abs(maxDistanceX) >= Math.abs(maxWorldBorderX)) {
                 highX = (int) maxWorldBorderX;
@@ -145,7 +144,6 @@ public class RandomTPAPI {
             } else {
                 lowX = (int) minWorldBorderX;
             }
-            System.out.println(highX + " " + lowX + " " + maxWorldBorderX + " " + minWorldBorderX + " X");
             return new Pair<>(lowX, highX);
         } else {
             // Calculating bounds for coordinates Z
@@ -153,7 +151,6 @@ public class RandomTPAPI {
             double minWorldBorderZ = world.getWorldBorder().getMinZ();
             int maxDistanceZ = (int) (Config.getMaxDistance() == 0 ? Math.abs(maxWorldBorderZ) + 2 : player.getZ() >= 0 ? Config.getMaxDistance() + Math.round(player.getZ()) : Config.getMaxDistance() - Math.round(player.getZ()));
             int minDistanceZ = (int) (player.getZ() >= 0 ? Config.getMinDistance() + player.getZ() : Config.getMinDistance() - player.getZ());
-            System.out.println(maxDistanceZ + " MXDISTANCE Z");
             int highZ;
             if(Math.abs(maxDistanceZ) >= Math.abs(maxWorldBorderZ)) {
                 highZ = (int) maxWorldBorderZ;
@@ -168,7 +165,6 @@ public class RandomTPAPI {
             } else {
                 lowZ = (int) minWorldBorderZ;
             }
-            System.out.println(highZ + " " + lowZ + " " + maxWorldBorderZ + " " + minWorldBorderZ + " Z");
             return new Pair<>(lowZ, highZ);
         }
     }
