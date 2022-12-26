@@ -7,7 +7,6 @@ import com.mojang.datafixers.util.Pair;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.*;
@@ -41,9 +40,13 @@ public class RandomTPAPI {
                 boundsZ = generateBounds(world, player, false);
 
                 int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
-                if(random.nextInt(2) == 1) x = x * -1;
+                if((world.getWorldBorder().getMaxX() > 0 && world.getWorldBorder().getMinX() < 0) || (world.getWorldBorder().getMaxX() < 0 && world.getWorldBorder().getMinX() > 0)) {
+                    if(random.nextInt(2) == 1) x = x * -1;
+                }
                 int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
-                if(random.nextInt(2) == 1) z = z * -1;
+                if((world.getWorldBorder().getMaxZ() > 0 && world.getWorldBorder().getMinZ() < 0) || (world.getWorldBorder().getMaxZ() < 0 && world.getWorldBorder().getMinZ() > 0)) {
+                    if(random.nextInt(2) == 1) z = z * -1;
+                }
 
                 mutableBlockPos.setX(x);
                 mutableBlockPos.setY(50);
@@ -58,6 +61,11 @@ public class RandomTPAPI {
                 mutableBlockPos.setX(pair.getFirst().getX());
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(pair.getFirst().getZ());
+                if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                    Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                    player.sendSystemMessage(msg, false);
+                    return;
+                }
             }
             int maxTries = Config.getMaxTries();
             int y = mutableBlockPos.getY();
@@ -75,15 +83,23 @@ public class RandomTPAPI {
                         mutableBlockPos.setX(pair.getFirst().getX());
                         mutableBlockPos.setY(50);
                         mutableBlockPos.setZ(pair.getFirst().getZ());
+                        if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                            Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                            player.sendSystemMessage(msg, false);
+                            return;
+                        }
                         continue;
                     }
                     int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
-                    if(random.nextInt(2) == 1) x = x * -1;
+                    if((world.getWorldBorder().getMaxX() > 0 && world.getWorldBorder().getMinX() < 0) || (world.getWorldBorder().getMaxX() < 0 && world.getWorldBorder().getMinX() > 0)) {
+                        if(random.nextInt(2) == 1) x = x * -1;
+                    }
                     int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
-                    if(random.nextInt(2) == 1) z = z * -1;
+                    if((world.getWorldBorder().getMaxZ() > 0 && world.getWorldBorder().getMinZ() < 0) || (world.getWorldBorder().getMaxZ() < 0 && world.getWorldBorder().getMinZ() > 0)) {
+                        if(random.nextInt(2) == 1) z = z * -1;
+                    }
 
                     mutableBlockPos.setX(x);
-                    y = 50;
                     mutableBlockPos.setY(50);
                     mutableBlockPos.setZ(z);
                     continue;
@@ -108,28 +124,51 @@ public class RandomTPAPI {
     }
 
     private static Pair<Integer, Integer> generateBounds(ServerLevel world, Player player, boolean XorZ) {
-        int maxDistance = (int) Math.round(Config.getMaxDistance() == 0 ? (world.getWorldBorder().getSize() / 2) : Config.getMaxDistance());
         if(XorZ) {
             // Calculating bounds for coordinates X
-            int highX = maxDistance + Math.abs(player.getBlockX());
-            if(highX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
-                highX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2));
+            double maxWorldBorderX = world.getWorldBorder().getMaxX();
+            double minWorldBorderX = world.getWorldBorder().getMinX();
+            int maxDistanceX = (int) (Config.getMaxDistance() == 0 ? Math.abs(maxWorldBorderX) + 2 : player.getX() >= 0 ? Config.getMaxDistance() + Math.round(player.getX()) : Config.getMaxDistance() - Math.round(player.getX()));
+            int minDistanceX = (int) (player.getX() >= 0 ? Config.getMinDistance() + player.getX() : Config.getMinDistance() - player.getX());
+            System.out.println(maxDistanceX + " MXDISTANCE X");
+            int highX;
+            if(Math.abs(maxDistanceX) >= Math.abs(maxWorldBorderX)) {
+                highX = (int) maxWorldBorderX;
+            } else {
+                highX = maxDistanceX;
             }
-            int lowX = Config.getMinDistance() + Math.abs(player.getBlockX());
-            if(lowX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
-                lowX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2)) - 10;
+            if(highX == maxDistanceX * -1 || highX == maxWorldBorderX * -1) highX = highX * -1;
+            if(minDistanceX >= highX) minDistanceX = highX >= 0 ? highX - 10 : highX + 10;
+            int lowX;
+            if(Math.abs(minDistanceX) >= Math.abs(minWorldBorderX)) {
+                lowX = minDistanceX;
+            } else {
+                lowX = (int) minWorldBorderX;
             }
+            System.out.println(highX + " " + lowX + " " + maxWorldBorderX + " " + minWorldBorderX + " X");
             return new Pair<>(lowX, highX);
         } else {
-            // Calculating bounds for coordinate Z
-            int highZ = maxDistance + Math.abs(player.getBlockZ());
-            if(highZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
-                highZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2));
+            // Calculating bounds for coordinates Z
+            double maxWorldBorderZ = world.getWorldBorder().getMaxZ();
+            double minWorldBorderZ = world.getWorldBorder().getMinZ();
+            int maxDistanceZ = (int) (Config.getMaxDistance() == 0 ? Math.abs(maxWorldBorderZ) + 2 : player.getZ() >= 0 ? Config.getMaxDistance() + Math.round(player.getZ()) : Config.getMaxDistance() - Math.round(player.getZ()));
+            int minDistanceZ = (int) (player.getZ() >= 0 ? Config.getMinDistance() + player.getZ() : Config.getMinDistance() - player.getZ());
+            System.out.println(maxDistanceZ + " MXDISTANCE Z");
+            int highZ;
+            if(Math.abs(maxDistanceZ) >= Math.abs(maxWorldBorderZ)) {
+                highZ = (int) maxWorldBorderZ;
+            } else {
+                highZ = maxDistanceZ;
             }
-            int lowZ = Config.getMinDistance() + Math.abs(player.getBlockZ());
-            if(lowZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
-                lowZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2)) - 10;
+            if(highZ == maxDistanceZ * -1 || highZ == maxWorldBorderZ * -1) highZ = highZ * -1;
+            if(minDistanceZ >= highZ) minDistanceZ = highZ >= 0 ? highZ - 10 : highZ + 10;
+            int lowZ;
+            if(Math.abs(minDistanceZ) >= Math.abs(minWorldBorderZ)) {
+                lowZ = minDistanceZ;
+            } else {
+                lowZ = (int) minWorldBorderZ;
             }
+            System.out.println(highZ + " " + lowZ + " " + maxWorldBorderZ + " " + minWorldBorderZ + " Z");
             return new Pair<>(lowZ, highZ);
         }
     }
