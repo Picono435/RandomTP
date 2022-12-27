@@ -123,7 +123,7 @@ public class RandomTPAPI {
             int minDistance = (int) (player.getX() + Config.getMinDistance());
             if(minDistance > world.getWorldBorder().getMaxX()) minDistance = (int) (world.getWorldBorder().getMaxX() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
-            if(maxDistance == minDistance) minDistance = minDistance + 1;
+            if(maxDistance == minDistance) minDistance = minDistance - 1;
             x = random.ints(minDistance, maxDistance).findAny().getAsInt();
         }
         int z;
@@ -143,7 +143,7 @@ public class RandomTPAPI {
             int minDistance = (int) (player.getZ() + Config.getMinDistance());
             if(minDistance > world.getWorldBorder().getMaxZ()) minDistance = (int) (world.getWorldBorder().getMaxZ() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
-            if(maxDistance == minDistance) minDistance = minDistance + 1;
+            if(maxDistance == minDistance) minDistance = minDistance - 1;
             z = random.ints(minDistance, maxDistance).findAny().getAsInt();
         }
         return new Pair<>(x, z);
