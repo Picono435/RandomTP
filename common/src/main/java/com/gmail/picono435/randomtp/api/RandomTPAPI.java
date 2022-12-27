@@ -3,31 +3,25 @@ package com.gmail.picono435.randomtp.api;
 import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.ResourceOrTagLocationArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 
 public class RandomTPAPI {
@@ -40,16 +34,10 @@ public class RandomTPAPI {
         try  {
             Random random = new Random();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-            Pair<Integer, Integer> boundsX = null;
-            Pair<Integer, Integer> boundsZ = null;
             if(biomeResourceKey == null) {
-                boundsX = generateBounds(world, player, true);
-                boundsZ = generateBounds(world, player, false);
-
-                int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
-                if(random.nextInt(2) == 1) x = x * -1;
-                int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
-                if(random.nextInt(2) == 1) z = z * -1;
+                Pair<Integer, Integer> coordinates = generateCoordinates(world, player, random);
+                int x = coordinates.getFirst();
+                int z = coordinates.getSecond();
 
                 mutableBlockPos.setX(x);
                 mutableBlockPos.setY(50);
@@ -81,15 +69,18 @@ public class RandomTPAPI {
                         mutableBlockPos.setX(pair.getFirst().getX());
                         mutableBlockPos.setY(50);
                         mutableBlockPos.setZ(pair.getFirst().getZ());
+                        if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                            TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                            player.sendMessage(msg, player.getUUID());
+                            return;
+                        }
                         continue;
                     }
-                    int x = random.ints(boundsX.getFirst(), boundsX.getSecond()).findAny().getAsInt();
-                    if(random.nextInt(2) == 1) x = x * -1;
-                    int z = random.ints(boundsZ.getFirst(), boundsZ.getSecond()).findAny().getAsInt();
-                    if(random.nextInt(2) == 1) z = z * -1;
+                    Pair<Integer, Integer> coordinates = generateCoordinates(world, player, random);
+                    int x = coordinates.getFirst();
+                    int z = coordinates.getSecond();
 
                     mutableBlockPos.setX(x);
-                    y = 50;
                     mutableBlockPos.setY(50);
                     mutableBlockPos.setZ(z);
                     continue;
@@ -113,31 +104,49 @@ public class RandomTPAPI {
         }
     }
 
-    private static Pair<Integer, Integer> generateBounds(ServerLevel world, Player player, boolean XorZ) {
-        int maxDistance = (int) Math.round(Config.getMaxDistance() == 0 ? (world.getWorldBorder().getSize() / 2) : Config.getMaxDistance());
-        if(XorZ) {
-            // Calculating bounds for coordinates X
-            int highX = maxDistance + Math.abs(player.getBlockX());
-            if(highX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
-                highX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2));
-            }
-            int lowX = Config.getMinDistance() + Math.abs(player.getBlockX());
-            if(lowX > Math.abs(world.getWorldBorder().getCenterX()) + (world.getWorldBorder().getSize() / 2)) {
-                lowX = (int) Math.round(world.getWorldBorder().getCenterX() + (world.getWorldBorder().getSize() / 2)) - 10;
-            }
-            return new Pair<>(lowX, highX);
+    private static Pair<Integer, Integer> generateCoordinates(ServerLevel world, Player player, Random random) {
+        // Calculating X coordinates
+        int x;
+        if(random.nextInt(2) == 1) {
+            // Calculating X coordinates from min to max
+            int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMinX() : (int) (player.getX() + Config.getMaxDistance());
+            if(maxDistance < world.getWorldBorder().getMinX()) maxDistance = (int) world.getWorldBorder().getMinX();
+            int minDistance = (int) (player.getX() - Config.getMinDistance());
+            if(minDistance < world.getWorldBorder().getMinX()) minDistance = (int) (world.getWorldBorder().getMinX() + 10);
+            if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
+            if(maxDistance == minDistance) minDistance = minDistance - 1;
+            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
         } else {
-            // Calculating bounds for coordinate Z
-            int highZ = maxDistance + Math.abs(player.getBlockZ());
-            if(highZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
-                highZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2));
-            }
-            int lowZ = Config.getMinDistance() + Math.abs(player.getBlockZ());
-            if(lowZ > Math.abs(world.getWorldBorder().getCenterZ()) + (world.getWorldBorder().getSize() / 2)) {
-                lowZ = (int) Math.round(world.getWorldBorder().getCenterZ() + (world.getWorldBorder().getSize() / 2)) - 10;
-            }
-            return new Pair<>(lowZ, highZ);
+            // Calculating X coordinates from max to min
+            int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxX() : (int) (player.getX() - Config.getMaxDistance());
+            if(maxDistance > world.getWorldBorder().getMaxX()) maxDistance = (int) world.getWorldBorder().getMaxX();
+            int minDistance = (int) (player.getX() + Config.getMinDistance());
+            if(minDistance > world.getWorldBorder().getMaxX()) minDistance = (int) (world.getWorldBorder().getMaxX() - 10);
+            if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
+            if(maxDistance == minDistance) minDistance = minDistance + 1;
+            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
         }
+        int z;
+        if(random.nextInt(2) == 1) {
+            // Calculating Z coordinates from min to max
+            int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMinZ() : (int) (player.getZ() + Config.getMaxDistance());
+            if(maxDistance < world.getWorldBorder().getMinZ()) maxDistance = (int) world.getWorldBorder().getMinZ();
+            int minDistance = (int) (player.getZ() - Config.getMinDistance());
+            if(minDistance < world.getWorldBorder().getMinZ()) minDistance = (int) (world.getWorldBorder().getMinZ() + 10);
+            if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
+            if(maxDistance == minDistance) minDistance = minDistance - 1;
+            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+        } else {
+            // Calculating Z coordinates from max to min
+            int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxZ() : (int) (player.getZ() - Config.getMaxDistance());
+            if(maxDistance > world.getWorldBorder().getMaxZ()) maxDistance = (int) world.getWorldBorder().getMaxZ();
+            int minDistance = (int) (player.getZ() + Config.getMinDistance());
+            if(minDistance > world.getWorldBorder().getMaxZ()) minDistance = (int) (world.getWorldBorder().getMaxZ() - 10);
+            if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
+            if(maxDistance == minDistance) minDistance = minDistance + 1;
+            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+        }
+        return new Pair<>(x, z);
     }
 
     public static ServerLevel getWorld(String world, MinecraftServer server) {
