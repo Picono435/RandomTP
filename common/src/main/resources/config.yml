@@ -46,6 +46,13 @@ others:
   # false = the vanilla /spreadplayers system
   # [default: true]
   use-original: true
+  # Should the mod teleport you automatically when first joinning
+  # none = does nothing
+  # rtp = random teleport in the default dimension
+  # rtpd <dimension> = random teleports to the specified dimension
+  # rtpb <biome> = random teleports to the specified biome
+  # [default: none]
+  auto-teleportation: none
   # Do you want to whitelist or blacklist destination biomes?
   # true = whitelist
   # false = blacklist
@@ -64,7 +71,6 @@ others:
     - 'minecraft:deep_cold_ocean'
     - 'minecraft:frozen_ocean'
     - 'minecraft:deep_frozen_ocean'
-
   # How long do you want the command cooldown to be?
   # (range: 0 ~ 1000)
   # [default: 0]
