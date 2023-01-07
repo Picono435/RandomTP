@@ -46,7 +46,7 @@ others:
   # false = the vanilla /spreadplayers system
   # [default: true]
   use-original: true
-  # Should the mod teleport you automatically when first joinning
+  # Should the mod teleport you automatically when first joining
   # none = does nothing
   # rtp = random teleport in the default dimension
   # rtpd <dimension> = random teleports to the specified dimension

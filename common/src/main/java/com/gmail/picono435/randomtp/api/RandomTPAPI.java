@@ -1,6 +1,6 @@
 package com.gmail.picono435.randomtp.api;
 
-import com.gmail.picono435.randomtp.RandomTP;
+import com.gmail.picono435.randomtp.RandomTPMod;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.datafixers.util.Pair;
@@ -25,11 +25,11 @@ import java.util.*;
 
 public class RandomTPAPI {
 
-    public static void randomTeleport(ServerPlayer player, ServerLevel world) {
-        randomTeleport(player, world, null);
+    public static boolean randomTeleport(ServerPlayer player, ServerLevel world) {
+        return randomTeleport(player, world, null);
     }
 
-    public static void randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
+    public static boolean randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
         try  {
             Random random = new Random();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -46,7 +46,7 @@ public class RandomTPAPI {
                 if(pair == null) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendSystemMessage(msg, false);
-                    return;
+                    return false;
                 }
                 mutableBlockPos.setX(pair.getFirst().getX());
                 mutableBlockPos.setY(50);
@@ -54,7 +54,7 @@ public class RandomTPAPI {
                 if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendSystemMessage(msg, false);
-                    return;
+                    return false;
                 }
             }
             int maxTries = Config.getMaxTries();
@@ -68,7 +68,7 @@ public class RandomTPAPI {
                         if(pair == null) {
                             Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendSystemMessage(msg, false);
-                            return;
+                            return false;
                         }
                         mutableBlockPos.setX(pair.getFirst().getX());
                         mutableBlockPos.setY(50);
@@ -76,7 +76,7 @@ public class RandomTPAPI {
                         if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
                             Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendSystemMessage(msg, false);
-                            return;
+                            return false;
                         }
                         continue;
                     }
@@ -95,16 +95,18 @@ public class RandomTPAPI {
                 if(maxTries == 0) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendSystemMessage(msg, false);
-                    return;
+                    return false;
                 }
             }
 
             player.teleportTo(world, mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ(), player.getXRot(), player.getYRot());
             Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
             player.sendSystemMessage(successful, false);
+            return true;
         } catch(Exception ex) {
-            RandomTP.getLogger().info("Error executing command.");
+            RandomTPMod.getLogger().info("Error executing command.");
             ex.printStackTrace();
+            return false;
         }
     }
 

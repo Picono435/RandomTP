@@ -1,10 +1,8 @@
 package com.gmail.picono435.randomtp.config;
 
-import com.gmail.picono435.randomtp.RandomTP;
-import com.google.common.io.Files;
+import com.gmail.picono435.randomtp.RandomTPMod;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import org.apache.commons.io.FileUtils;
-import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -51,13 +49,13 @@ public class ConfigHandler {
             messages.node("command", "dimension-not-allowed").mergeFrom(messages.node("command", "dimensionNotAllowed"));
             messages.node("command", "dimensionNotAllowed").set(null);
             messagesLoader.save(messages);
-            RandomTP.getLogger().warn("Migrated config key from dimensionNotAllowed to dimension-not-allowed");
+            RandomTPMod.getLogger().warn("Migrated config key from dimensionNotAllowed to dimension-not-allowed");
         }
         if(!messages.node("command", "biomeNotAllowed").isNull()) {
             messages.node("command", "biome-not-allowed").mergeFrom(messages.node("command", "biomeNotAllowed"));
             messages.node("command", "biomeNotAllowed").set(null);
             messagesLoader.save(messages);
-            RandomTP.getLogger().warn("Migrated config key from biomeNotAllowed to biome-not-allowed");
+            RandomTPMod.getLogger().warn("Migrated config key from biomeNotAllowed to biome-not-allowed");
         }
     }
 
