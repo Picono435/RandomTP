@@ -13,7 +13,7 @@ The best RandomTP mod ever!
 [![Available For](https://img.shields.io/static/v1?label=Available%20For&style=for-the-badge&color=34aa2f&message=1.19.x-1.12.x)][curseforge:files]
 
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/randomtp?color=00AF5C&label=modrinth&style=for-the-badge&logo=modrinth)][modrinth:files]
-    [![CurseForge Downloads](https://img.shields.io/badge/dynamic/json?color=f16436&style=for-the-badge&label=CurseForge&query=downloads.total&url=https://api.cfwidget.com/minecraft/mc-mods/randomtp)][curseforge:files]
+[![CurseForge Downloads](https://img.shields.io/badge/dynamic/json?color=f16436&style=for-the-badge&label=CurseForge&query=downloads.total&url=https://api.cfwidget.com/minecraft/mc-mods/randomtp)][curseforge:files]
 [![GitHub Downloads (all releases)](https://img.shields.io/github/downloads/Picono435/RandomTP/total?style=for-the-badge&amp;label=GitHub&amp;prefix=downloads%20&amp;color=4078c0&amp;logo=github)][releases]
 </div>
 
