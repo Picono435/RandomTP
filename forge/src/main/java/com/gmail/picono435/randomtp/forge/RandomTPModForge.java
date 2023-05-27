@@ -1,6 +1,5 @@
 package com.gmail.picono435.randomtp.forge;
 
-import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 
 import com.gmail.picono435.randomtp.commands.RTPBCommand;
@@ -9,20 +8,18 @@ import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
 
+import com.gmail.picono435.randomtp.data.PlayerState;
+import com.gmail.picono435.randomtp.data.ServerState;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 @Mod(RandomTPMod.MOD_ID)
 public class RandomTPModForge {
@@ -51,23 +48,33 @@ public class RandomTPModForge {
     public RandomTPModForge() {
         RandomTPMod.init();
 
-        RandomTP.getLogger().info("Loading config files...");
+        RandomTPMod.getLogger().info("Loading config files...");
 
         try {
             ConfigHandler.loadConfiguration();
         } catch (Exception e) {
             e.printStackTrace();
-            RandomTP.getLogger().info("An error occuried while loading configuration.");
+            RandomTPMod.getLogger().info("An error occuried while loading configuration.");
         }
 
-        RandomTP.getLogger().info("Config files loaded.");
+        RandomTPMod.getLogger().info("Config files loaded.");
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void init(ServerStartingEvent event) {
-        RandomTP.getLogger().info("RandomTP successfully loaded.");
+        RandomTPMod.getLogger().info("RandomTP successfully loaded.");
+    }
+
+    @SubscribeEvent
+    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if(event.getEntity().level.isClientSide) return;
+        PlayerState playerState = ServerState.getPlayerState(event.getPlayer());
+        if(!playerState.hasJoined) {
+            RandomTPMod.spawnTeleportPlayer((ServerPlayer) event.getEntity());
+            playerState.hasJoined = true;
+        }
     }
 
     @SubscribeEvent
@@ -83,7 +90,7 @@ public class RandomTPModForge {
 
     @SubscribeEvent
     public void permission(PermissionGatherEvent.Nodes event) {
-        RandomTP.getLogger().info("Registering permission nodes...");
+        RandomTPMod.getLogger().info("Registering permission nodes...");
         event.addNodes(BASIC_COMMAND_PERM, INTERDIM_COMMAND_PERM, INTERBIOME_COMMAND_PERM, COOLDOWN_EXEMPT_PERM);
     }
 }

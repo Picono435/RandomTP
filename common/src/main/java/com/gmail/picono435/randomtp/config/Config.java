@@ -28,6 +28,10 @@ public class Config {
         return ConfigHandler.getConfig().node("others").node("use-original").getBoolean();
     }
 
+    public static String getAutoTeleport() {
+        return ConfigHandler.getConfig().node("others").node("auto-teleportation").getString();
+    }
+
     public static boolean useBiomeWhitelist() {
         return ConfigHandler.getConfig().node("others").node("use-biome-whitelist").getBoolean();
     }

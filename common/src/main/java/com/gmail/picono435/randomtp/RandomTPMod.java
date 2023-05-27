@@ -1,10 +1,47 @@
 package com.gmail.picono435.randomtp;
 
+import com.gmail.picono435.randomtp.api.RandomTPAPI;
+import com.gmail.picono435.randomtp.config.Config;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class RandomTPMod {
 
     public static final String MOD_ID = "randomtp";
 
     public static void init() {
-        RandomTP.getLogger().info("Starting Random Teleport Mod, thanks for downloading it.");
+        RandomTPMod.getLogger().info("Starting Random Teleport Mod, thanks for downloading it.");
+    }
+
+    public static void spawnTeleportPlayer(ServerPlayer player) {
+        String rtpCommand = Config.getAutoTeleport();
+        if(rtpCommand == null) return;
+        switch(rtpCommand.split(" ")[0]) {
+            case "rtp":
+                RandomTPAPI.randomTeleport(player, player.getLevel());
+                return;
+            case "rtpd":
+                String dimension = rtpCommand.split(" ")[1];
+                RandomTPAPI.randomTeleport(player, RandomTPAPI.getWorld(dimension, player.getServer()));
+                return;
+            case "rtpb":
+                String biome = rtpCommand.split(" ")[1];
+                ResourceLocation resourcelocation = ResourceLocation.tryParse(biome);
+                ResourceKey<Biome> registrykey = ResourceKey.create(Registry.BIOME_REGISTRY, resourcelocation);
+                RandomTPAPI.randomTeleport(player, player.getLevel(), registrykey);
+                return;
+            case "none": {}
+        }
+    }
+
+    public static Logger getLogger() {
+        return LogManager.getLogger();
     }
 }

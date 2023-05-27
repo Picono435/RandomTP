@@ -1,6 +1,6 @@
 package com.gmail.picono435.randomtp.api;
 
-import com.gmail.picono435.randomtp.RandomTP;
+import com.gmail.picono435.randomtp.RandomTPMod;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.datafixers.util.Pair;
@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -19,18 +19,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class RandomTPAPI {
 
-    public static void randomTeleport(ServerPlayer player, ServerLevel world) {
-        randomTeleport(player, world, null);
+    public static boolean randomTeleport(ServerPlayer player, ServerLevel world) {
+        return randomTeleport(player, world, null);
     }
 
-    public static void randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
+    public static boolean randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
         try  {
             Random random = new Random();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -47,11 +47,16 @@ public class RandomTPAPI {
                 if(pair == null) {
                     TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendMessage(msg, player.getUUID());
-                    return;
+                    return false;
                 }
                 mutableBlockPos.setX(pair.getFirst().getX());
                 mutableBlockPos.setY(50);
                 mutableBlockPos.setZ(pair.getFirst().getZ());
+                if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                    TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                    player.sendMessage(msg, player.getUUID());
+                    return false;
+                }
             }
             int maxTries = Config.getMaxTries();
             int y = mutableBlockPos.getY();
@@ -64,7 +69,7 @@ public class RandomTPAPI {
                         if(pair == null) {
                             TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendMessage(msg, player.getUUID());
-                            return;
+                            return false;
                         }
                         mutableBlockPos.setX(pair.getFirst().getX());
                         mutableBlockPos.setY(50);
@@ -72,7 +77,7 @@ public class RandomTPAPI {
                         if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
                             TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                             player.sendMessage(msg, player.getUUID());
-                            return;
+                            return false;
                         }
                         continue;
                     }
@@ -91,16 +96,18 @@ public class RandomTPAPI {
                 if(maxTries == 0) {
                     TextComponent msg = new TextComponent(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
                     player.sendMessage(msg, player.getUUID());
-                    return;
+                    return false;
                 }
             }
 
             player.teleportTo(world, mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ(), player.getXRot(), player.getYRot());
             TextComponent successful = new TextComponent(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
             player.sendMessage(successful, player.getUUID());
+            return true;
         } catch(Exception ex) {
-            RandomTP.getLogger().info("Error executing command.");
+            RandomTPMod.getLogger().info("Error executing command.");
             ex.printStackTrace();
+            return false;
         }
     }
 
@@ -115,7 +122,7 @@ public class RandomTPAPI {
             if(minDistance < world.getWorldBorder().getMinX()) minDistance = (int) (world.getWorldBorder().getMinX() + 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            x = random.nextInt(maxDistance - minDistance) + minDistance;
         } else {
             // Calculating X coordinates from max to min
             int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxX() : (int) (player.getX() - Config.getMaxDistance());
@@ -124,7 +131,7 @@ public class RandomTPAPI {
             if(minDistance > world.getWorldBorder().getMaxX()) minDistance = (int) (world.getWorldBorder().getMaxX() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            x = random.nextInt(maxDistance - minDistance) + minDistance;
         }
         int z;
         if(random.nextInt(2) == 1) {
@@ -135,7 +142,7 @@ public class RandomTPAPI {
             if(minDistance < world.getWorldBorder().getMinZ()) minDistance = (int) (world.getWorldBorder().getMinZ() + 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            z = random.nextInt(maxDistance - minDistance) + minDistance;
         } else {
             // Calculating Z coordinates from max to min
             int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxZ() : (int) (player.getZ() - Config.getMaxDistance());
@@ -144,7 +151,7 @@ public class RandomTPAPI {
             if(minDistance > world.getWorldBorder().getMaxZ()) minDistance = (int) (world.getWorldBorder().getMaxZ() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            z = random.nextInt(maxDistance - minDistance) + minDistance;
         }
         return new Pair<>(x, z);
     }
@@ -217,7 +224,8 @@ public class RandomTPAPI {
     }
 
     public static boolean isDangerBlock(ServerLevel world, BlockPos mutableBlockPos) {
-        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
+        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock
+                || world.getBlockState(mutableBlockPos).getBlock() instanceof CactusBlock;
     }
 
     private static boolean isInBiomeWhitelist(ResourceLocation biome) {

@@ -1,6 +1,5 @@
 package com.gmail.picono435.randomtp.fabric;
 
-import com.gmail.picono435.randomtp.RandomTP;
 import com.gmail.picono435.randomtp.RandomTPMod;
 import com.gmail.picono435.randomtp.api.fabric.RandomTPAPIImpl;
 import com.gmail.picono435.randomtp.commands.RTPBCommand;
@@ -8,39 +7,58 @@ import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
+import com.gmail.picono435.randomtp.data.PlayerState;
+import com.gmail.picono435.randomtp.data.ServerState;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.server.MinecraftServer;
 
 public class RandomTPModFabric implements ModInitializer {
+
+    public static MinecraftServer minecraftServer;
 
     @Override
     public void onInitialize() {
         RandomTPMod.init();
 
-        RandomTP.getLogger().info("Loading config files...");
+        RandomTPMod.getLogger().info("Loading config files...");
 
         try {
             ConfigHandler.loadConfiguration();
         } catch (Exception e) {
             e.printStackTrace();
-            RandomTP.getLogger().info("An error occuried while loading configuration.");
+            RandomTPMod.getLogger().info("An error occuried while loading configuration.");
         }
 
-        RandomTP.getLogger().info("Config files loaded.");
+        RandomTPMod.getLogger().info("Config files loaded.");
 
         ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
-            RandomTP.getLogger().info("Registering permission nodes...");
+            RandomTPMod.getLogger().info("Registering permission nodes...");
 
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.basic", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.interdim", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.command.interbiome", 0);
             RandomTPAPIImpl.registeredNodes.put("randomtp.cooldown.exempt", 1);
 
-            RandomTP.getLogger().info("RandomTP successfully loaded.");
+            minecraftServer = server;
+
+            RandomTPMod.getLogger().info("RandomTP successfully loaded.");
         });
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            PlayerState playerState = ServerState.getPlayerState(handler.player);
+            System.out.println("1");
+            if(!playerState.hasJoined) {
+                RandomTPMod.spawnTeleportPlayer(handler.getPlayer());
+                System.out.println("2");
+                playerState.hasJoined = true;
+            }
+            System.out.println("3");
+        });
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, environment) -> {
             RTPCommand.register(dispatcher);
             if(Config.useDimension()) {
                 RTPDCommand.register(dispatcher);
