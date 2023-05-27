@@ -29,9 +29,7 @@ public class RandomTPMod {
                 return;
             case "rtpd":
                 String dimension = rtpCommand.split(" ")[1];
-                ResourceLocation dimensionLocation = ResourceLocation.tryParse(dimension);
-                ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, dimensionLocation);
-                RandomTPAPI.randomTeleport(player, player.getServer().getLevel(dimensionKey));
+                RandomTPAPI.randomTeleport(player, RandomTPAPI.getWorld(dimension, player.getServer()));
                 return;
             case "rtpb":
                 String biome = rtpCommand.split(" ")[1];
