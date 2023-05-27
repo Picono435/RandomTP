@@ -90,7 +90,7 @@ public class RandomTPAPI {
                     continue;
                 }
                 if(maxTries > 0){
-                    maxTries--;
+                    maxTries--; 
                 }
                 if(maxTries == 0) {
                     Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
@@ -121,7 +121,7 @@ public class RandomTPAPI {
             if(minDistance < world.getWorldBorder().getMinX()) minDistance = (int) (world.getWorldBorder().getMinX() + 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            x = random.nextInt(maxDistance - minDistance) + minDistance;
         } else {
             // Calculating X coordinates from max to min
             int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxX() : (int) (player.getX() - Config.getMaxDistance());
@@ -130,7 +130,7 @@ public class RandomTPAPI {
             if(minDistance > world.getWorldBorder().getMaxX()) minDistance = (int) (world.getWorldBorder().getMaxX() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            x = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            x = random.nextInt(maxDistance - minDistance) + minDistance;
         }
         int z;
         if(random.nextInt(2) == 1) {
@@ -141,7 +141,7 @@ public class RandomTPAPI {
             if(minDistance < world.getWorldBorder().getMinZ()) minDistance = (int) (world.getWorldBorder().getMinZ() + 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            z = random.nextInt(maxDistance - minDistance) + minDistance;
         } else {
             // Calculating Z coordinates from max to min
             int maxDistance = Config.getMaxDistance() == 0 ? (int) world.getWorldBorder().getMaxZ() : (int) (player.getZ() - Config.getMaxDistance());
@@ -150,7 +150,7 @@ public class RandomTPAPI {
             if(minDistance > world.getWorldBorder().getMaxZ()) minDistance = (int) (world.getWorldBorder().getMaxZ() - 10);
             if(maxDistance < minDistance) maxDistance = maxDistance ^ minDistance ^ (minDistance = maxDistance);
             if(maxDistance == minDistance) minDistance = minDistance - 1;
-            z = random.ints(minDistance, maxDistance).findAny().getAsInt();
+            z = random.nextInt(maxDistance - minDistance) + minDistance;
         }
         return new Pair<>(x, z);
     }

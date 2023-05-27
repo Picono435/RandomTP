@@ -22,6 +22,7 @@ public class RandomTPMod {
 
     public static void spawnTeleportPlayer(ServerPlayer player) {
         String rtpCommand = Config.getAutoTeleport();
+        if(rtpCommand == null) return;
         switch(rtpCommand.split(" ")[0]) {
             case "rtp":
                 RandomTPAPI.randomTeleport(player, player.getLevel());

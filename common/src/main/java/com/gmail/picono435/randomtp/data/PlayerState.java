@@ -9,6 +9,6 @@ public class PlayerState extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag compoundTag) {
-        return null;
+        return compoundTag;
     }
 }
