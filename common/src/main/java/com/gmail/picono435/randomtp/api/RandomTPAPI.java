@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 
 import java.util.*;
@@ -223,7 +224,8 @@ public class RandomTPAPI {
     }
 
     public static boolean isDangerBlock(ServerLevel world, BlockPos mutableBlockPos) {
-        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock;
+        return world.getBlockState(mutableBlockPos).getBlock() instanceof LiquidBlock
+                || world.getBlockState(mutableBlockPos).getBlock() instanceof CactusBlock;
     }
 
     private static boolean isInBiomeWhitelist(ResourceLocation biome) {
