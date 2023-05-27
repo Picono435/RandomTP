@@ -15,8 +15,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 
-import java.io.ObjectInputFilter;
-
 public class RandomTPModFabric implements ModInitializer {
 
     public static MinecraftServer minecraftServer;
