@@ -49,13 +49,10 @@ public class RandomTPModFabric implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PlayerState playerState = ServerState.getPlayerState(handler.player);
-            System.out.println("1");
             if(!playerState.hasJoined) {
                 RandomTPMod.spawnTeleportPlayer(handler.getPlayer());
-                System.out.println("2");
                 playerState.hasJoined = true;
             }
-            System.out.println("3");
         });
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
