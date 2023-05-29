@@ -15,6 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
@@ -67,7 +68,7 @@ public class RandomTPModForge {
         RandomTPMod.getLogger().info("RandomTP successfully loaded.");
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if(event.getEntity().level.isClientSide) return;
         PlayerState playerState = ServerState.getPlayerState(event.getPlayer());
