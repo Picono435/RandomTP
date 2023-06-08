@@ -44,22 +44,22 @@ public class RTPCommand {
 						if(!Config.getDefaultWorld().equals("playerworld")) {
 							RandomTPAPI.randomTeleport(p, RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer()));
 						} else {
-							RandomTPAPI.randomTeleport(p, p.getLevel());
+							RandomTPAPI.randomTeleport(p, p.serverLevel());
 						}
 					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}
-				double cal = p.getLevel().getWorldBorder().getSize()/2;
+				double cal = p.serverLevel().getWorldBorder().getSize()/2;
 				BigDecimal num = new BigDecimal(cal);
 				String maxDistance = num.toPlainString();
 				if(Config.getMaxDistance() == 0) {
-					String command = "spreadplayers " + p.getLevel().getWorldBorder().getCenterX() + " " + p.getLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + maxDistance + " false " + p.getName().getString().toLowerCase();
+					String command = "spreadplayers " + p.serverLevel().getWorldBorder().getCenterX() + " " + p.serverLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + maxDistance + " false " + p.getName().getString().toLowerCase();
 					p.getServer().getCommands().performCommand(p.getServer().getCommands().getDispatcher().parse(command, p.getServer().createCommandSourceStack()), command);
 					Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(successful, false);
 				} else {
-					String command = "spreadplayers " + p.getLevel().getWorldBorder().getCenterX() + " " + p.getLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + Config.getMaxDistance() + " false " + p.getName().getString().toLowerCase();
+					String command = "spreadplayers " + p.serverLevel().getWorldBorder().getCenterX() + " " + p.serverLevel().getWorldBorder().getCenterZ() + " " + Config.getMinDistance() + " " + Config.getMaxDistance() + " false " + p.getName().getString().toLowerCase();
 					p.getServer().getCommands().performCommand(p.getServer().getCommands().getDispatcher().parse(command, p.getServer().createCommandSourceStack()), command);
 					Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(successful, false);

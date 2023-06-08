@@ -70,7 +70,7 @@ public class RandomTPModForge {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(event.getEntity().level.isClientSide) return;
+        if(event.getEntity().level().isClientSide) return;
         PlayerState playerState = ServerState.getPlayerState(event.getEntity());
         if(!playerState.hasJoined) {
             RandomTPMod.spawnTeleportPlayer((ServerPlayer) event.getEntity());

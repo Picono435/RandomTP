@@ -60,7 +60,7 @@ public class ServerState extends SavedData {
     }
 
     public static PlayerState getPlayerState(LivingEntity player) {
-        ServerState serverState = getServerState(player.level.getServer());
+        ServerState serverState = getServerState(player.getServer());
 
         PlayerState playerState = serverState.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerState());
 

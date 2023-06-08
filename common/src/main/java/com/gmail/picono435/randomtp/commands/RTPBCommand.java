@@ -63,7 +63,7 @@ public class RTPBCommand {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(finding, false);
 					new Thread(() -> {
-						RandomTPAPI.randomTeleport(p, p.getLevel(), biomeKey);
+						RandomTPAPI.randomTeleport(p, p.serverLevel(), biomeKey);
 					}).start();
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
