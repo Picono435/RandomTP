@@ -3,10 +3,13 @@ package com.gmail.picono435.randomtp.data;
 import com.gmail.picono435.randomtp.RandomTPMod;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ForcedChunksSavedData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -50,8 +53,7 @@ public class ServerState extends SavedData {
                 .getLevel(Level.OVERWORLD).getDataStorage();
 
         ServerState serverState = persistentStateManager.computeIfAbsent(
-                ServerState::createFromNbt,
-                ServerState::new,
+                new SavedData.Factory<>(ServerState::new, ServerState::createFromNbt, null),
                 RandomTPMod.MOD_ID);
 
         serverState.setDirty();
