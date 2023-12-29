@@ -1,29 +1,24 @@
 package com.gmail.picono435.randomtp.forge;
 
 import com.gmail.picono435.randomtp.RandomTPMod;
-
 import com.gmail.picono435.randomtp.commands.RTPBCommand;
 import com.gmail.picono435.randomtp.commands.RTPCommand;
 import com.gmail.picono435.randomtp.commands.RTPDCommand;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.ConfigHandler;
-
 import com.gmail.picono435.randomtp.data.PlayerState;
 import com.gmail.picono435.randomtp.data.ServerState;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 
-@Mod(RandomTPMod.MOD_ID)
-public class RandomTPModForge {
+public class EventBuses {
 
     public static PermissionNode<Boolean> BASIC_COMMAND_PERM = new PermissionNode<>(
             RandomTPMod.MOD_ID,
@@ -46,7 +41,7 @@ public class RandomTPModForge {
             PermissionTypes.BOOLEAN,
             (arg, uUID, permissionDynamicContexts) -> false);
 
-    public RandomTPModForge() {
+    public static void modInit() {
         RandomTPMod.init();
 
         RandomTPMod.getLogger().info("Loading config files...");
@@ -59,8 +54,6 @@ public class RandomTPModForge {
         }
 
         RandomTPMod.getLogger().info("Config files loaded.");
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent

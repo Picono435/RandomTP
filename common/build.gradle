@@ -1,5 +1,7 @@
 architectury {
-    common("fabric", "forge")
+    common(rootProject.platforms.split(",")) {
+        it.platformPackage "neoforge", "forge"
+    }
 }
 
 dependencies {

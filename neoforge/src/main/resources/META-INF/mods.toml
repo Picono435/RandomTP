@@ -1,0 +1,15 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+issueTrackerURL="https://github.com/Picono435/RandomTP/issues" #optional
+license="MIT License"
+[[mods]] #mandatory
+modId="randomtp" #mandatory
+version="${version}" #mandatory
+displayName="RandomTP" #mandatory
+displayURL="https://piconodev.com" #optional
+logoFile="logo.jpeg" #optional
+credits="Thanks to everyone that helped me and PiconoDev growing." #optional
+authors="Picono435" #optional
+description='''
+A mod that allows you to teleport you to a random location without colliding with lava, water or the world border.
+'''

@@ -3,8 +3,14 @@ plugins {
 }
 
 architectury {
-    platformSetupLoomIde()
-    forge()
+    forgeLike(["forge", "neoforge"]) {
+        it.platformPackage "neoforge", "forge"
+        it.remapForgeLike "net/minecraftforge/common/extensions/IForgeItem", "net/neoforged/neoforge/common/extensions/IItemExtension"
+        it.remapForgeLike "net/minecraftforge/client/event/TextureStitchEvent\$Post", "net/neoforged/neoforge/client/event/TextureAtlasStitchedEvent"
+        it.remapForgeLike "net/minecraftforge/fluids/ForgeFlowingFluid", "net/neoforged/neoforge/fluids/BaseFlowingFluid"
+        it.remapForgeLike "net/minecraftforge/fluids/ForgeFlowingFluid\$Properties", "net/neoforged/neoforge/fluids/BaseFlowingFluid\$Properties"
+        it.remapForgeLike "net/minecraftforge/common/ForgeHooks", "net/neoforged/neoforge/common/CommonHooks"
+    }
 }
 
 configurations {
@@ -18,53 +24,7 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
 
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
-
-    forgeRuntimeLibrary(implementation(shadowCommon('org.spongepowered:configurate-yaml:4.1.2')))
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
-    }
-}
-
-shadowJar {
-    exclude "fabric.mod.json"
-
-    configurations = [project.configurations.shadowCommon]
-    archiveClassifier.set("dev-shadow")
-
-    relocate 'org.yaml', 'com.gmail.picono435.dependencies.yaml'
-    relocate 'org.spongepowered', 'com.gmail.picono435.dependencies.spongepowered'
-    relocate 'io.leangen', 'com.gmail.picono435.dependencies.leagen'
-    relocate 'org.checkerframework', 'com.gmail.picono435.dependencies.checkerframework'
-    relocate 'me.lucko', 'com.gmail.picono435.dependencies.lucko'
-}
-
-remapJar {
-    input.set shadowJar.archiveFile
-    dependsOn shadowJar
-    archiveClassifier.set("forge")
-}
-
-jar {
-    archiveClassifier.set("dev")
-}
-
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
-}
-
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
+    compileOnly(project(path: ":common", configuration: "namedElements")) { transitive false }
 }
 
 publishing {

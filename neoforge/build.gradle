@@ -4,41 +4,47 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    neoForge {
+        platformPackage = "forge"
+    }
 }
 
 configurations {
     common
-    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
+    forgeLike
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common, forgeLike
+    runtimeClasspath.extendsFrom common, forgeLike
+    developmentNeoForge.extendsFrom common
+    developmentForgeLike.extendsFrom forgeLike
 }
 
 repositories {
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url "https://maven.neoforged.net/releases/" }
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    shadowCommon(modImplementation("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")) { transitive = false }
+    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    forgeLike(project(path: ":forge", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
+    shadowCommon(project(path: ":forge", configuration: "transformProductionNeoForge")) { transitive false }
 
-    implementation shadowCommon('org.spongepowered:configurate-yaml:4.1.2')
+    forgeRuntimeLibrary(implementation(shadowCommon('org.spongepowered:configurate-yaml:4.1.2')))
 }
 
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand "version": project.version
     }
 }
 
 shadowJar {
+    exclude "fabric.mod.json"
+
     configurations = [project.configurations.shadowCommon]
     archiveClassifier.set("dev-shadow")
 
@@ -53,7 +59,7 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    archiveClassifier.set("fabric")
+    archiveClassifier.set("neoforge")
 }
 
 jar {
@@ -74,7 +80,7 @@ components.java {
 
 publishing {
     publications {
-        mavenFabric(MavenPublication) {
+        mavenNeoForge(MavenPublication) {
             artifactId = rootProject.archives_base_name + "-" + project.name
             from components.java
         }
@@ -85,3 +91,4 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+
