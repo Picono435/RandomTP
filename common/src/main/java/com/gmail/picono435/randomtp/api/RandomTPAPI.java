@@ -23,64 +23,24 @@ import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class RandomTPAPI {
 
-    public static boolean randomTeleport(ServerPlayer player, ServerLevel world) {
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+    public static Future<Boolean> randomTeleport(ServerPlayer player, ServerLevel world) {
         return randomTeleport(player, world, null);
     }
 
-    public static boolean randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
-        try  {
-            Random random = new Random();
-            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-            if(biomeResourceKey == null) {
-                Pair<Integer, Integer> coordinates = generateCoordinates(world, player, random);
-                int x = coordinates.getFirst();
-                int z = coordinates.getSecond();
-
-                mutableBlockPos.setX(x);
-                mutableBlockPos.setY(50);
-                mutableBlockPos.setZ(z);
-            } else {
-                Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
-                if(pair == null) {
-                    Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendSystemMessage(msg, false);
-                    return false;
-                }
-                mutableBlockPos.setX(pair.getFirst().getX());
-                mutableBlockPos.setY(50);
-                mutableBlockPos.setZ(pair.getFirst().getZ());
-                if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
-                    Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendSystemMessage(msg, false);
-                    return false;
-                }
-            }
-            int maxTries = Config.getMaxTries();
-            int y = mutableBlockPos.getY();
-            while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
-                y++;
-                mutableBlockPos.setY(y);
-                if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
-                    if(biomeResourceKey != null) {
-                        Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
-                        if(pair == null) {
-                            Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                            player.sendSystemMessage(msg, false);
-                            return false;
-                        }
-                        mutableBlockPos.setX(pair.getFirst().getX());
-                        mutableBlockPos.setY(50);
-                        mutableBlockPos.setZ(pair.getFirst().getZ());
-                        if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
-                            Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                            player.sendSystemMessage(msg, false);
-                            return false;
-                        }
-                        continue;
-                    }
+    public static Future<Boolean> randomTeleport(ServerPlayer player, ServerLevel world, ResourceKey<Biome> biomeResourceKey) {
+        return executorService.submit(() -> {
+            try  {
+                Random random = new Random();
+                BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+                if(biomeResourceKey == null) {
                     Pair<Integer, Integer> coordinates = generateCoordinates(world, player, random);
                     int x = coordinates.getFirst();
                     int z = coordinates.getSecond();
@@ -88,27 +48,76 @@ public class RandomTPAPI {
                     mutableBlockPos.setX(x);
                     mutableBlockPos.setY(50);
                     mutableBlockPos.setZ(z);
-                    continue;
+                } else {
+                    Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
+                    if(pair == null) {
+                        Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                        player.sendSystemMessage(msg, false);
+                        return false;
+                    }
+                    mutableBlockPos.setX(pair.getFirst().getX());
+                    mutableBlockPos.setY(50);
+                    mutableBlockPos.setZ(pair.getFirst().getZ());
+                    if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                        Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                        player.sendSystemMessage(msg, false);
+                        return false;
+                    }
                 }
-                if(maxTries > 0){
-                    maxTries--; 
-                }
-                if(maxTries == 0) {
-                    Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
-                    player.sendSystemMessage(msg, false);
-                    return false;
-                }
-            }
+                int maxTries = Config.getMaxTries();
+                int y = mutableBlockPos.getY();
+                while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
+                    y++;
+                    mutableBlockPos.setY(y);
+                    if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
+                        if(biomeResourceKey != null) {
+                            Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
+                            if(pair == null) {
+                                Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                                player.sendSystemMessage(msg, false);
+                                return false;
+                            }
+                            mutableBlockPos.setX(pair.getFirst().getX());
+                            mutableBlockPos.setY(50);
+                            mutableBlockPos.setZ(pair.getFirst().getZ());
+                            if(!world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
+                                Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                                player.sendSystemMessage(msg, false);
+                                return false;
+                            }
+                            continue;
+                        }
+                        Pair<Integer, Integer> coordinates = generateCoordinates(world, player, random);
+                        int x = coordinates.getFirst();
+                        int z = coordinates.getSecond();
 
-            player.teleportTo(world, mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ(), player.getXRot(), player.getYRot());
-            Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
-            player.sendSystemMessage(successful, false);
-            return true;
-        } catch(Exception ex) {
-            RandomTPMod.getLogger().info("Error executing command.");
-            ex.printStackTrace();
-            return false;
-        }
+                        mutableBlockPos.setX(x);
+                        mutableBlockPos.setY(50);
+                        mutableBlockPos.setZ(z);
+                        continue;
+                    }
+                    if(maxTries > 0){
+                        maxTries--;
+                    }
+                    if(maxTries == 0) {
+                        Component msg = Component.literal(Messages.getMaxTries().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("&", "§"));
+                        player.sendSystemMessage(msg, false);
+                        return false;
+                    }
+                }
+
+                player.getServer().submit(() -> {
+                    player.teleportTo(world, mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ(), player.getXRot(), player.getYRot());
+                    Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
+                    player.sendSystemMessage(successful, false);
+                });
+                return true;
+            } catch(Exception ex) {
+                RandomTPMod.getLogger().info("Error executing command.");
+                ex.printStackTrace();
+                return false;
+            }
+        });
     }
 
     private static Pair<Integer, Integer> generateCoordinates(ServerLevel world, Player player, Random random) {
