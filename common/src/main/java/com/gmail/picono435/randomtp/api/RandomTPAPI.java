@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -24,14 +24,16 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class RandomTPAPI {
 
-    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     public static Future<Boolean> randomTeleport(ServerPlayer player, ServerLevel world) {
         return randomTeleport(player, world, null);
@@ -109,7 +111,7 @@ public class RandomTPAPI {
                 }
 
                 player.getServer().submit(() -> {
-                    TeleportTransition teleportTransition = new TeleportTransition(world, mutableBlockPos.getCenter(), Vec3.ZERO, player.getYRot(), player.getXRot(), false, false, Set.of(), null);
+                    TeleportTransition teleportTransition = new TeleportTransition(world, mutableBlockPos.getCenter(), Vec3.ZERO, player.getYRot(), player.getXRot(), false, false, Set.of(), TeleportTransition.DO_NOTHING);
                     player.teleport(teleportTransition);
                     Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
                     player.sendSystemMessage(successful, false);
@@ -184,11 +186,7 @@ public class RandomTPAPI {
         int cooldownTime = Config.getCooldown();
         if(cooldowns.containsKey(player.getName().getString())) {
             long secondsLeft = ((cooldowns.get(player.getName().getString())/1000)+cooldownTime) - (System.currentTimeMillis()/1000);
-            if(secondsLeft > 0) {
-                return false;
-            } else {
-                return true;
-            }
+            return secondsLeft <= 0;
         } else {
             return true;
         }
@@ -211,17 +209,11 @@ public class RandomTPAPI {
     }
 
     public static boolean isSafe(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if (isEmpty(world, mutableBlockPos) && !isDangerBlocks(world, mutableBlockPos) && world.getWorldBorder().isWithinBounds(mutableBlockPos)) {
-            return true;
-        }
-        return false;
+        return isEmpty(world, mutableBlockPos) && !isDangerBlocks(world, mutableBlockPos) && world.getWorldBorder().isWithinBounds(mutableBlockPos);
     }
 
     public static boolean isEmpty(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
-        if (world.isEmptyBlock(mutableBlockPos.offset(0, 1, 0)) && world.isEmptyBlock(mutableBlockPos)) {
-            return true;
-        }
-        return false;
+        return world.isEmptyBlock(mutableBlockPos.offset(0, 1, 0)) && world.isEmptyBlock(mutableBlockPos);
     }
 
     public static boolean isDangerBlocks(ServerLevel world, BlockPos.MutableBlockPos mutableBlockPos) {
@@ -229,10 +221,7 @@ public class RandomTPAPI {
                 isDangerBlock(world, mutableBlockPos.offset(0, -1, 0))) {
             return true;
         }
-        if(world.getBlockState(mutableBlockPos.offset(0, -1, 0)).getBlock() != Blocks.AIR) {
-            return false;
-        }
-        return true;
+        return world.getBlockState(mutableBlockPos.offset(0, -1, 0)).getBlock() == Blocks.AIR;
     }
 
     public static boolean isDangerBlock(ServerLevel world, BlockPos mutableBlockPos) {
