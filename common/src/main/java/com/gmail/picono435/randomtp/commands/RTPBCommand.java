@@ -1,6 +1,5 @@
 package com.gmail.picono435.randomtp.commands;
 
-import com.gmail.picono435.randomtp.api.RandomTPAPI;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.brigadier.CommandDispatcher;
@@ -18,19 +17,21 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.gmail.picono435.randomtp.api.RandomTPAPI.*;
+
 public class RTPBCommand {
 
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	private static final Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext) {
-		dispatcher.register(Commands.literal("rtpb").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interbiome"))
+		dispatcher.register(Commands.literal("rtpb").requires(source -> hasPermission(source, "randomtp.command.interbiome"))
 				.then(
 						Commands.argument("biome", ResourceOrTagArgument.resourceOrTag(commandBuildContext, Registries.BIOME))
 								.executes(context ->
 										runCommand(context.getSource().getPlayerOrException(), ResourceOrTagArgument.getResourceOrTag(context, "biome", Registries.BIOME))
 								)
 				));
-		dispatcher.register(Commands.literal("biomertp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.interbiome"))
+		dispatcher.register(Commands.literal("biomertp").requires(source -> hasPermission(source, "randomtp.command.interbiome"))
 				.then(
 						Commands.argument("biome", ResourceOrTagArgument.resourceOrTag(commandBuildContext, Registries.BIOME))
 								.executes(context ->
@@ -39,10 +40,10 @@ public class RTPBCommand {
 				));
 	}
 	
-	private static int runCommand(ServerPlayer p, ResourceOrTagArgument.Result<Biome> biome) {
+	public static int runCommand(ServerPlayer p, ResourceOrTagArgument.Result<Biome> biome) {
 		try {
-			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
-				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
+			if(!checkCooldown(p, cooldowns) && !hasPermission(p, "randomtp.cooldown.exempt")) {
+				long secondsLeft = getCooldownLeft(p, cooldowns);
 				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
 				p.sendSystemMessage(cooldownmes, false);
 				return 1;
@@ -57,7 +58,7 @@ public class RTPBCommand {
 				if(Config.useOriginal()) {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(finding, false);
-					RandomTPAPI.randomTeleport(p, p.serverLevel(), biomeKey);
+					randomTeleport(p, p.serverLevel(), biomeKey);
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}
