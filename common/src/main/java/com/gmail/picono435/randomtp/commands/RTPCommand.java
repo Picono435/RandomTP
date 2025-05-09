@@ -1,36 +1,36 @@
 package com.gmail.picono435.randomtp.commands;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.gmail.picono435.randomtp.api.RandomTPAPI;
 import com.gmail.picono435.randomtp.config.Config;
 import com.gmail.picono435.randomtp.config.Messages;
 import com.mojang.brigadier.CommandDispatcher;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.gmail.picono435.randomtp.api.RandomTPAPI.*;
+
 public class RTPCommand {
 	
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	private static final Map<String, Long> cooldowns = new HashMap<String, Long>();
 	
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-		dispatcher.register(Commands.literal("rtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
+		dispatcher.register(Commands.literal("rtp").requires(source -> hasPermission(source, "randomtp.command.basic"))
 				.executes(context -> runCommand(context.getSource().getPlayerOrException())
 				));
-		dispatcher.register(Commands.literal("randomtp").requires(source -> RandomTPAPI.hasPermission(source, "randomtp.command.basic"))
+		dispatcher.register(Commands.literal("randomtp").requires(source -> hasPermission(source, "randomtp.command.basic"))
 				.executes(context -> runCommand(context.getSource().getPlayerOrException())
 				));
 	}
 	
-	private static int runCommand(ServerPlayer p) {
+	public static int runCommand(ServerPlayer p) {
 		try {
-			if(!RandomTPAPI.checkCooldown(p, cooldowns) && !RandomTPAPI.hasPermission(p, "randomtp.cooldown.exempt")) {
-				long secondsLeft = RandomTPAPI.getCooldownLeft(p, cooldowns);
+			if(!checkCooldown(p, cooldowns) && !hasPermission(p, "randomtp.cooldown.exempt")) {
+				long secondsLeft = getCooldownLeft(p, cooldowns);
 				Component cooldownmes = Component.literal(Messages.getCooldown().replaceAll("\\{secondsLeft\\}", Long.toString(secondsLeft)).replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("&", "§"));
 				p.sendSystemMessage(cooldownmes, false);
 				return 1;
@@ -40,9 +40,9 @@ public class RTPCommand {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(finding, false);
 					if(!Config.getDefaultWorld().equals("playerworld")) {
-						RandomTPAPI.randomTeleport(p, RandomTPAPI.getWorld(Config.getDefaultWorld(), p.getServer()));
+						randomTeleport(p, getWorld(Config.getDefaultWorld(), p.getServer()));
 					} else {
-						RandomTPAPI.randomTeleport(p, p.serverLevel());
+						randomTeleport(p, p.serverLevel());
 					}
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
