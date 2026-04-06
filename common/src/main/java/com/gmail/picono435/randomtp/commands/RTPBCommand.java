@@ -11,7 +11,7 @@ import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 
@@ -49,7 +49,7 @@ public class RTPBCommand {
 			} else {
 				cooldowns.remove(p.getName().getString());
 				ResourceKey<Biome> biomeKey = biome.unwrap().left().get().key();
-				ResourceLocation biomeLocation = biomeKey.location();
+				Identifier biomeLocation = biomeKey.identifier();
 				if(!inWhitelist(biomeLocation.toString())) {
 					p.sendSystemMessage(Component.literal(Messages.getBiomeNotAllowed().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{biomeId\\}", biomeLocation.toString()).replace('&', '§')), false);
 					return 1;
@@ -57,7 +57,7 @@ public class RTPBCommand {
 				if(Config.useOriginal()) {
 					Component finding = Component.literal(Messages.getFinding().replaceAll("\\{playerName\\}", p.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)p.position().x).replaceAll("\\{blockY\\}", "" + (int)p.position().y).replaceAll("\\{blockZ\\}", "" + (int)p.position().z).replaceAll("&", "§"));
 					p.sendSystemMessage(finding, false);
-					RandomTPAPI.randomTeleport(p, p.serverLevel(), biomeKey);
+					RandomTPAPI.randomTeleport(p, p.level(), biomeKey);
 					cooldowns.put(p.getName().getString(), System.currentTimeMillis());
 					return 1;
 				}

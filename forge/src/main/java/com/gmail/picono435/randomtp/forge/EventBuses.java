@@ -9,11 +9,12 @@ import com.gmail.picono435.randomtp.config.ConfigHandler;
 import com.gmail.picono435.randomtp.data.PlayerState;
 import com.gmail.picono435.randomtp.data.ServerState;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.Priority;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
@@ -43,7 +44,7 @@ public class EventBuses {
                 if(player == null) {
                     return false;
                 } else {
-                    return player.hasPermissions(1);
+                    return player.permissions().hasPermission(Permissions.COMMANDS_ADMIN);
                 }
             });
 
@@ -67,13 +68,13 @@ public class EventBuses {
         RandomTPMod.getLogger().info("RandomTP successfully loaded.");
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = Priority.LOWEST)
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(event.getEntity().level().isClientSide) return;
+        if(event.getEntity().level().isClientSide()) return;
         PlayerState playerState = ServerState.getPlayerState(event.getEntity());
-        if(!playerState.hasJoined) {
+        if(!playerState.hasJoined()) {
             RandomTPMod.spawnTeleportPlayer((ServerPlayer) event.getEntity());
-            playerState.hasJoined = true;
+            ServerState.get(event.getEntity().level().getServer()).setHasJoined(event.getEntity().getUUID(), true);
         }
     }
 

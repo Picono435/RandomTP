@@ -1,15 +1,27 @@
 package com.gmail.picono435.randomtp.data;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class PlayerState extends SavedData {
+public class PlayerState {
 
-    public boolean hasJoined;
+    public static final Codec<PlayerState> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.BOOL.fieldOf("hasJoined").forGetter(PlayerState::hasJoined)
+            ).apply(instance, PlayerState::new)
+    );
 
-    @Override
-    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        return compoundTag;
+    private boolean hasJoined;
+
+    public PlayerState(boolean hasJoined) {
+        this.hasJoined = hasJoined;
+    }
+
+    public boolean hasJoined() {
+        return this.hasJoined;
+    }
+
+    public void setHasJoined(boolean hasJoined) {
+        this.hasJoined = hasJoined;
     }
 }

@@ -11,7 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,7 +71,7 @@ public class RandomTPAPI {
                 while (!isSafe(world, mutableBlockPos) && (maxTries == -1 || maxTries > 0)) {
                     y++;
                     mutableBlockPos.setY(y);
-                    if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().location())) {
+                    if(mutableBlockPos.getY() >= 200 || !isInBiomeWhitelist(world.getBiome(mutableBlockPos.immutable()).unwrapKey().get().identifier())) {
                         if(biomeResourceKey != null) {
                             Pair<BlockPos, Holder<Biome>> pair = world.findClosestBiome3d(biomeHolder -> biomeHolder.is(biomeResourceKey), player.getOnPos(), 6400, 32, 64);
                             if(pair == null) {
@@ -108,8 +108,8 @@ public class RandomTPAPI {
                     }
                 }
 
-                player.getServer().submit(() -> {
-                    TeleportTransition teleportTransition = new TeleportTransition(world, mutableBlockPos.getCenter(), Vec3.ZERO, player.getYRot(), player.getXRot(), false, false, Set.of(), null);
+                player.level().getServer().submit(() -> {
+                    TeleportTransition teleportTransition = new TeleportTransition(world, mutableBlockPos.getCenter(), Vec3.ZERO, player.getYRot(), player.getXRot(), false, false, Set.of(), TeleportTransition.DO_NOTHING);
                     player.teleport(teleportTransition);
                     Component successful = Component.literal(Messages.getSuccessful().replaceAll("\\{playerName\\}", player.getName().getString()).replaceAll("\\{blockX\\}", "" + (int)player.position().x).replaceAll("\\{blockY\\}", "" + (int)player.position().y).replaceAll("\\{blockZ\\}", "" + (int)player.position().z).replaceAll("&", "§"));
                     player.sendSystemMessage(successful, false);
@@ -170,8 +170,8 @@ public class RandomTPAPI {
 
     public static ServerLevel getWorld(String world, MinecraftServer server) {
         try {
-            ResourceLocation resourcelocation = ResourceLocation.tryParse(world);
-            ResourceKey<Level> registrykey = ResourceKey.create(Registries.DIMENSION, resourcelocation);
+            Identifier identifier = Identifier.tryParse(world);
+            ResourceKey<Level> registrykey = ResourceKey.create(Registries.DIMENSION, identifier);
             ServerLevel worldTo = server.getLevel(registrykey);
             return worldTo;
         } catch(Exception ex) {
@@ -240,7 +240,7 @@ public class RandomTPAPI {
                 || world.getBlockState(mutableBlockPos).getBlock() instanceof CactusBlock;
     }
 
-    private static boolean isInBiomeWhitelist(ResourceLocation biome) {
+    private static boolean isInBiomeWhitelist(Identifier biome) {
         //WHITELIST
         if(Config.useBiomeWhitelist()) {
             if(biome == null) {

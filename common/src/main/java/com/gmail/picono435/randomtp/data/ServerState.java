@@ -1,72 +1,70 @@
 package com.gmail.picono435.randomtp.data;
 
 import com.gmail.picono435.randomtp.RandomTPMod;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ForcedChunksSavedData;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.DimensionDataStorage;
-import org.apache.logging.log4j.core.jmx.Server;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ServerState extends SavedData {
 
-    public HashMap<UUID, PlayerState> players = new HashMap<>();
+    public static final Codec<ServerState> CODEC =
+            Codec.unboundedMap(UUIDUtil.STRING_CODEC, PlayerState.CODEC)
+                    .xmap(ServerState::new, ServerState::getPlayerStates);
 
-    @Override
-    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        CompoundTag playersNbtCompound = new CompoundTag();
-        players.forEach((UUID, playerSate) -> {
-            CompoundTag playerStateNbt = new CompoundTag();
+    private static final SavedDataType<ServerState> TYPE = new SavedDataType<>(
+            RandomTPMod.MOD_ID + "_server_state",
+            ServerState::new,
+            CODEC,
+            null
+    );
 
-            playerStateNbt.putBoolean("hasJoined", playerSate.hasJoined);
+    private final HashMap<UUID, PlayerState> players = new HashMap<>();
 
-            playersNbtCompound.put(String.valueOf(UUID), playerStateNbt);
-        });
-        compoundTag.put("players", playersNbtCompound);
-        return compoundTag;
+    public ServerState() {
     }
 
-    public static ServerState createFromNbt(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        ServerState serverState = new ServerState();
-
-        CompoundTag playersTag = compoundTag.getCompound("players");
-        playersTag.getAllKeys().forEach(key -> {
-            PlayerState playerState = new PlayerState();
-
-            playerState.hasJoined = playersTag.getCompound(key).getBoolean("hasJoined");
-
-            UUID uuid = UUID.fromString(key);
-            serverState.players.put(uuid, playerState);
-        });
-
-        return serverState;
+    public ServerState(Map<UUID, PlayerState> players) {
+        this.players.putAll(players);
     }
 
-    public static ServerState getServerState(MinecraftServer server) {
-        DimensionDataStorage persistentStateManager = server
-                .getLevel(Level.OVERWORLD).getDataStorage();
+    public Map<UUID, PlayerState> getPlayerStates() {
+        return this.players;
+    }
 
-        ServerState serverState = persistentStateManager.computeIfAbsent(
-                new SavedData.Factory<>(ServerState::new, ServerState::createFromNbt, null),
-                RandomTPMod.MOD_ID);
+    public PlayerState getPlayerState(UUID uuid) {
+        return this.players.get(uuid);
+    }
 
-        serverState.setDirty();
+    public PlayerState getOrCreatePlayerState(UUID uuid) {
+        return this.players.computeIfAbsent(uuid, ignored -> {
+            setDirty();
+            return new PlayerState(false);
+        });
+    }
 
-        return serverState;
+    public void setHasJoined(UUID uuid, boolean hasJoined) {
+        this.getOrCreatePlayerState(uuid).setHasJoined(hasJoined);
+        setDirty();
+    }
+
+    public boolean hasPlayer(UUID uuid) {
+        return this.players.containsKey(uuid);
+    }
+
+    public static ServerState get(MinecraftServer server) {
+        return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
     public static PlayerState getPlayerState(LivingEntity player) {
-        ServerState serverState = getServerState(player.getServer());
+        ServerState serverState = get(player.level().getServer());
 
-        PlayerState playerState = serverState.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerState());
-
-        return playerState;
+        return serverState.getOrCreatePlayerState(player.getUUID());
     }
 }

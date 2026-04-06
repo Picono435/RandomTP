@@ -4,7 +4,7 @@ import com.gmail.picono435.randomtp.api.RandomTPAPI;
 import com.gmail.picono435.randomtp.config.Config;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import org.apache.logging.log4j.LogManager;
@@ -23,17 +23,17 @@ public class RandomTPMod {
         if(rtpCommand == null) return;
         switch(rtpCommand.split(" ")[0]) {
             case "rtp":
-                RandomTPAPI.randomTeleport(player, player.serverLevel());
+                RandomTPAPI.randomTeleport(player, player.level());
                 return;
             case "rtpd":
                 String dimension = rtpCommand.split(" ")[1];
-                RandomTPAPI.randomTeleport(player, RandomTPAPI.getWorld(dimension, player.getServer()));
+                RandomTPAPI.randomTeleport(player, RandomTPAPI.getWorld(dimension, player.level().getServer()));
                 return;
             case "rtpb":
                 String biome = rtpCommand.split(" ")[1];
-                ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
+                Identifier biomeLocation = Identifier.tryParse(biome);
                 ResourceKey<Biome> biomeKey = ResourceKey.create(Registries.BIOME, biomeLocation);
-                RandomTPAPI.randomTeleport(player, player.serverLevel(), biomeKey);
+                RandomTPAPI.randomTeleport(player, player.level(), biomeKey);
                 return;
             case "none": {}
         }
